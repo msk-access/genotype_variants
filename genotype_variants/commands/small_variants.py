@@ -109,7 +109,7 @@ def generate(
     duplex_bam,
     simplex_bam,
 ):
-    """Command that helps to generate genotyped MAF, 
+    """Command that helps to generate genotyped MAF,
     the output file will be labelled with 
     patient identifier as prefix"""
     logger_output = pathlib.Path.cwd().joinpath("genotype_variants.log")
