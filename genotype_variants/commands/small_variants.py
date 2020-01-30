@@ -38,6 +38,7 @@ small_variants
 Created on January 29, 2020
 Description: console script for genotyping small variants
 @author: Ronak H Shah
+@coauthor: Maysun Hasan
 """
 BASE_DIR = pathlib.Path("__file__").resolve().parent
 # Making logging possible
@@ -68,13 +69,6 @@ def cli():
     help="Full path to reference file in FASTA format",
 )
 @click.option(
-    "-g",
-    "--gbcms-path",
-    required=True,
-    type=click.Path(exists=True),
-    help="Full path to GetBaseCountMultiSample executable with fragment support",
-)
-@click.option(
     "-p",
     "--patient-id",
     required=True,
@@ -102,6 +96,45 @@ def cli():
     type=click.Path(exists=True),
     help="Full path to simplex bam file, Note: This option assumes that the .bai file is present at same location as the bam file",
 )
+@click.option(
+    "-g",
+    "--gbcms-path",
+    required=True,
+    type=click.Path(exists=True),
+    help="Full path to GetBaseCountMultiSample executable with fragment support",
+)
+@click.option(
+    "-fd",
+    "--filter-duplicate",
+    required=False,
+    default=0
+    type=click.INT,
+    help="Filter duplicate parameter for GetBaseCountMultiSample",
+)
+@click.option(
+    "-fc",
+    "--fragment-count",
+    required=False,
+    default=1
+    type=click.INT,
+    help="Fragment Count parameter for GetBaseCountMultiSample",
+)
+@click.option(
+    "-mapq",
+    "--mapping-quality",
+    required=False,
+    default=20
+    type=click.INT,
+    help="Mapping quality for GetBaseCountMultiSample",
+)
+@click.option(
+    "-t",
+    "--threads",
+    required=False,
+    default=1
+    type=click.INT,
+    help="Number of threads to use for GetBaseCountMultiSample",
+)
 @click_log.simple_verbosity_option(logger)
 def generate(
     input_maf,
@@ -111,6 +144,10 @@ def generate(
     standard_bam,
     duplex_bam,
     simplex_bam,
+    filter_duplicate, 
+    fragment_count,
+    mapping_quality, 
+    threads
 ):
     """Command that helps to generate genotyped MAF,
     the output file will be labelled with 
@@ -189,17 +226,21 @@ def generate_gbcms_cmd(input_maf, btype, reference_fasta, gbcms_path, patient_id
         + sample_id
         + ":"
         + str(bam)
-        + " --filter_duplicate 0"
-        + " --fragment_count 1"
+        + " --filter_duplicate "
+        + str(filter_duplicate)
+        + " --fragment_count "
+        + str(fragment_count)
         + " --maf "
         + str(input_maf)
-        + " --maq 20"
+        + " --maq "
+        + str(mapping_quality)
         + " --omaf"
         + " --output "
         + str(output_maf)
         + " --fasta "
         + str(reference_fasta)
-        + " --thread 10"
+        + " --thread "
+        + str(threads)
     )
 
     return (cmd, output_maf)
@@ -212,7 +253,7 @@ def merge_maf(patient_id, input_maf, duplex_output_maf, simplex_output_maf):
     df_merge = create_duplexsimplex(s_maf, d_maf)
     df_merge.to_csv("test.maf", sep="\t", index=False)
 
-
+#Adopted from Maysun script
 def create_duplexsimplex(df_s, df_d):
     np.seterr(divide="ignore", invalid="ignore")
     mutation_key = [
@@ -220,7 +261,7 @@ def create_duplexsimplex(df_s, df_d):
         "Start_Position",
         "End_Position",
         "Reference_Allele",
-        "Tumor_Seq_Allele2",
+        "Tumor_Seq_Allele1",
     ]
     df_s = df_s.copy()
     df_d = df_d.copy()
