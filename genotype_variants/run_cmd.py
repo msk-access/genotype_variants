@@ -1,7 +1,7 @@
 def run_cmd(cmd):
     """Code to run shell commands"""
     logger.debug(
-        "run_cmd: run: the commandline is %s",
+        "run_cmd: run: the command line is %s",
         cmd.encode("unicode_escape").decode("utf-8"),
     )
     out = subprocess.Popen(
