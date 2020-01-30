@@ -26,6 +26,7 @@ def run_cmd(cmd):
         stderr=subprocess.STDOUT,
         shell=True,
     )
+    out.wait()
     stdout, stderr = out.communicate()
     if stderr is None:
         logger.debug("run_cmd: run: Read: %s", stdout.decode("utf-8"))
