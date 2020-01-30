@@ -1,4 +1,4 @@
-import logger
+import logging
 import subprocess
 """
 run_cmd
@@ -10,6 +10,9 @@ Created on January 29, 2020
 Description: Code to run shell commands
 @author: Ronak H Shah
 """
+# Making logging possible
+logger = logging.getLogger("genotype_variants")
+
 def run_cmd(cmd):
     """Code to run shell commands"""
     logger.debug(
