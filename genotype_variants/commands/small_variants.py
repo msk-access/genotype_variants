@@ -45,7 +45,7 @@ click_log.ColorFormatter.colors["info"] = dict(fg="green")
 
 @click.group()
 def cli():
-    """ Sub-commands for genotyping small variants"""
+    """Sub-commands for genotyping small variants"""
     pass
 
 
@@ -109,7 +109,9 @@ def generate(
     duplex_bam,
     simplex_bam,
 ):
-    """Command that helps to generate genotyped maf, it will produce output file using the given patient identifier as prefix"""
+    """Command that helps to generate genotyped MAF, 
+    the output file will be labelled with 
+    patient identifier as prefix"""
     logger_output = pathlib.Path.cwd().joinpath("genotype_variants.log")
     fh = logging.FileHandler(logger_output)
     formatter = logging.Formatter(
