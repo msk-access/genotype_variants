@@ -1,3 +1,14 @@
+import logger
+"""
+run_cmd
+~~~~~~~~~~~~~~~
+:Description: Code to run shell commands 
+"""
+"""
+Created on January 29, 2020
+Description: Code to run shell commands
+@author: Ronak H Shah
+"""
 def run_cmd(cmd):
     """Code to run shell commands"""
     logger.debug(
