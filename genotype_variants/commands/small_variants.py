@@ -199,7 +199,7 @@ def generate_gbcms_cmd(input_maf, btype, reference_fasta, gbcms_path, patient_id
         + str(output_maf)
         + " --fasta "
         + str(reference_fasta)
-        + " --thread 1"
+        + " --thread 10"
     )
 
     return (cmd, output_maf)
