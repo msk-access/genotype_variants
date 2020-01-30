@@ -131,7 +131,7 @@ def cli():
     "-t",
     "--threads",
     required=False,
-    default=1
+    default=1,
     type=click.INT,
     help="Number of threads to use for GetBaseCountMultiSample",
 )
