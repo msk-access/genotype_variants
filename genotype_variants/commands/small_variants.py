@@ -132,6 +132,16 @@ def generate(
             "Required to specify at-least one input BAM file option. Please refer to the README for more information"
         )
         exit(1)
+    logger.info("Patient ID: %s", patient_id)
+    logger.info("Input MAF: %s", input_maf)
+    logger.info("Reference FASTA: %s", reference_fasta)
+    logger.info("GetBaseCountMultiSample: %s", gbcms_path)
+    if standard_bam:
+        logger.info("Standard BAM: %s", standard_bam)
+    if duplex_bam:
+        logger.info("Duplex BAM: %s", duplex_bam)
+    if simplex_bam:
+        logger.info("Simplex BAM: %s", simplex_bam)
     # Run GetBaseMultisampleCount for each available bam file
     if standard_bam:
         btype = "standard"
@@ -166,7 +176,7 @@ def generate(
 def generate_gbcms_cmd(input_maf, btype, reference_fasta, gbcms_path, patient_id, bam):
     sample_id = patient_id + "-" + btype
     output_maf = pathlib.Path.cwd().joinpath(sample_id + "_genotyped.maf")
-
+    
     cmd = (
         str(gbcms_path)
         + " --bam "
