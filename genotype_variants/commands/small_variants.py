@@ -207,7 +207,7 @@ def generate_gbcms_cmd(input_maf, btype, reference_fasta, gbcms_path, patient_id
 
 def merge_maf(patient_id, input_maf, duplex_output_maf, simplex_output_maf):
     i_maf = pd.read_csv(input_maf, sep="\t", header="infer")
-    d_maf = pd.read_csv(duplex_output_maf, sep="\t", header="infer"
+    d_maf = pd.read_csv(duplex_output_maf, sep="\t", header="infer")
     s_maf = pd.read_csv(simplex_output_maf, sep="\t", header="infer")
     df_merge = create_duplexsimplex(s_maf, d_maf)
     df_merge.write_csv("test.maf", sep="\t")
