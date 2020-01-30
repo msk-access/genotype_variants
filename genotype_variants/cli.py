@@ -66,9 +66,9 @@ class MyCLI(click.MultiCommand):
 
 
 @click.command(cls=MyCLI)
-@click.version_option(None, "-v", "--version", message="%(version)s", prog_name="mskaccess_operators")
+@click.version_option(None, "-v", "--version", message="%(version)s", prog_name="genotype_variants")
 def main(args=None):
-    """Console script for mskaccess_operators."""
+    """Console script for genotype_variants."""
     pass
 
 
