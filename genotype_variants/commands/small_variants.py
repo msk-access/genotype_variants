@@ -143,6 +143,9 @@ def generate(
     if simplex_bam:
         logger.info("Simplex BAM: %s", simplex_bam)
     # Run GetBaseMultisampleCount for each available bam file
+    std_output_maf = None
+    duplex_output_maf = None
+    simplex_output_maf = None
     if standard_bam:
         btype = "standard"
         (cmd, std_output_maf) = generate_gbcms_cmd(
@@ -187,7 +190,7 @@ def generate_gbcms_cmd(input_maf, btype, reference_fasta, gbcms_path, patient_id
         + " --fragment_count 1"
         + " --maf "
         + str(input_maf)
-        + " --mapq 20"
+        + " --maq 20"
         + " --omaf"
         + " --output "
         + str(output_maf)
