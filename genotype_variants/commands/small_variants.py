@@ -142,9 +142,9 @@ def generate(input_maf, reference_fasta, gbcms_count, patient_id, standard_bam, 
 
 def generate_gbcms_cmd(input_maf, btype, reference_fasta, gbcms_path, patient_id, bam):
     sample_id = patient_id + "-" + btype
-    output_maf = os.path.join(os.getcwd, sample_id + "_genotyped.maf")
+    output_maf = pathlib.Path.cwd().joinpath(sample_id + "_genotyped.maf")
 
-    cmd = gbcms_path + 
+    cmd = str(gbcms_path) +
     " --bam " + sample_id + ":" + bam + 
     " --filter_duplicate 0" + 
     " --fragment_count 1" +
@@ -152,12 +152,12 @@ def generate_gbcms_cmd(input_maf, btype, reference_fasta, gbcms_path, patient_id
     " --mapq 20" + 
     " --omaf" + 
     " --output " + output_maf +
-    " --fasta " + reference_fasta +
+    " --fasta " + str(reference_fasta) +
     " --threads 1"
 
     return(cmd, output_maf)
 
 def merge_maf(patient_id,input_maf,std_output_maf,duplex_output_maf,simplex_output_maf):
-
+    pass
 
 
