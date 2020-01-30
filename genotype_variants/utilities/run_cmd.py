@@ -1,4 +1,4 @@
-def run(cmd):
+def run_cmd(cmd):
     """Code to run shell commands"""
     logger.debug(
         "run_cmd: run: the commandline is %s",

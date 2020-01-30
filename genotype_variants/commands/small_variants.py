@@ -3,7 +3,7 @@ import sys
 import logging
 import time
 import pathlib
-import genotype_variants.utilities.run_cmd
+import genotype_variants.utilities.run_cmd as run_cmd
 
 try:
     import click
@@ -138,19 +138,19 @@ def generate(
         (cmd, std_output_maf) = generate_gbcms_cmd(
             input_maf, btype, reference_fasta, gbcms_path, patient_id, standard_bam
         )
-        exit_code = run_cmd.run(cmd)
+        exit_code = run_cmd(cmd)
     if duplex_bam:
         btype = "duplex"
         (cmd, duplex_output_maf) = generate_gbcms_cmd(
             input_maf, btype, reference_fasta, gbcms_path, patient_id, duplex_bam
         )
-        exit_code = run_cmd.run(cmd)
+        exit_code = run_cmd(cmd)
     if simplex_bam:
         btype = "simplex"
         (cmd, simplex_output_maf) = generate_gbcms_cmd(
             input_maf, btype, reference_fasta, gbcms_path, patient_id, simplex_bam
         )
-        exit_code = run_cmd.run(cmd)
+        exit_code = run_cmd(cmd)
     merge_maf(
         patient_id, input_maf, std_output_maf, duplex_output_maf, simplex_output_maf
     )
