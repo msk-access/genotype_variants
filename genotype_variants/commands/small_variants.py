@@ -166,7 +166,7 @@ def generate(
             input_maf, btype, reference_fasta, gbcms_path, patient_id, simplex_bam
         )
         p3 = run_cmd(cmd)
-    exit_codes = [p.wait() for p in p1, p2, p3]
+    exit_codes = [p.wait() for p in [p1, p2, p3]]
     merge_maf(
         patient_id, input_maf, std_output_maf, duplex_output_maf, simplex_output_maf
     )
