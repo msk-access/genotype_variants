@@ -100,8 +100,15 @@ def cli():
     help="Full path to simplex bam file, Note: This option assumes that the .bai file is present at same location as the bam file",
 )
 @click_log.simple_verbosity_option(logger)
-
-def generate(input_maf, reference_fasta, gbcms_count, patient_id, standard_bam, duplex_bam, simplex_bam):
+def generate(
+    input_maf,
+    reference_fasta,
+    gbcms_count,
+    patient_id,
+    standard_bam,
+    duplex_bam,
+    simplex_bam,
+):
     """Command that helps to generate genotyped maf, it will produce output file using the given patient identifier as prefix"""
     logger_output = pathlib.Path.cwd().joinpath("genotype_variants.log")
     fh = logging.FileHandler(logger_output)
@@ -116,22 +123,35 @@ def generate(input_maf, reference_fasta, gbcms_count, patient_id, standard_bam, 
     logger.info("====================================================")
     t1_start = time.perf_counter()
     t2_start = time.process_time()
-    if(standard_bam or duplex_bam or simplex_bam):
+    if standard_bam or duplex_bam or simplex_bam:
         pass
     else:
-        logger.error("Required to specify at-least one input BAM file option. Please refer to the README for more information")
+        logger.error(
+            "Required to specify at-least one input BAM file option. Please refer to the README for more information"
+        )
         exit(1)
-    #Run GetBaseMultisampleCount for each available bam file
-    if(standard_bam):
-        (cmd, std_output_maf) = generate_gbcms_cmd(input_maf, btype="standard", reference_fasta, gbcms_path, patient_id, standard_bam)
+    # Run GetBaseMultisampleCount for each available bam file
+    if standard_bam:
+        btype = "standard"
+        (cmd, std_output_maf) = generate_gbcms_cmd(
+            input_maf, btype, reference_fasta, gbcms_path, patient_id, standard_bam
+        )
         run_cmd(cmd)
-    if(duplex_bam):
-        (cmd, duplex_output_maf) = generate_gbcms_cmd(input_maf, btype="duplex", reference_fasta, gbcms_path, patient_id, duplex_bam)
+    if duplex_bam:
+        btype = "duplex"
+        (cmd, duplex_output_maf) = generate_gbcms_cmd(
+            input_maf, btype, reference_fasta, gbcms_path, patient_id, duplex_bam
+        )
         run_cmd(cmd)
-    if(simplex_bam):
-        (cmd, simplex_output_maf) = generate_gbcms_cmd(input_maf, btype="simplex", reference_fasta, gbcms_path, patient_id, simplex_bam)
+    if simplex_bam:
+        btype = "simplex"
+        (cmd, simplex_output_maf) = generate_gbcms_cmd(
+            input_maf, btype, reference_fasta, gbcms_path, patient_id, simplex_bam
+        )
         run_cmd(cmd)
-    merge_maf(patient_id,input_maf,std_output_maf,duplex_output_maf,simplex_output_maf)
+    merge_maf(
+        patient_id, input_maf, std_output_maf, duplex_output_maf, simplex_output_maf
+    )
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
     logger.info("--------------------------------------------------")
@@ -140,15 +160,35 @@ def generate(input_maf, reference_fasta, gbcms_count, patient_id, standard_bam, 
     logger.info("--------------------------------------------------")
     return
 
+
 def generate_gbcms_cmd(input_maf, btype, reference_fasta, gbcms_path, patient_id, bam):
     sample_id = patient_id + "-" + btype
     output_maf = pathlib.Path.cwd().joinpath(sample_id + "_genotyped.maf")
 
-    cmd = str(gbcms_path) + " --bam " + sample_id + ":" + bam + " --filter_duplicate 0" + " --fragment_count 1" + " --maf " +  input_maf + " --mapq 20" + " --omaf" + " --output " + output_maf + " --fasta " + str(reference_fasta) + " --threads 1"
+    cmd = (
+        str(gbcms_path)
+        + " --bam "
+        + sample_id
+        + ":"
+        + bam
+        + " --filter_duplicate 0"
+        + " --fragment_count 1"
+        + " --maf "
+        + input_maf
+        + " --mapq 20"
+        + " --omaf"
+        + " --output "
+        + output_maf
+        + " --fasta "
+        + str(reference_fasta)
+        + " --threads 1"
+    )
 
-    return(cmd, output_maf)
+    return (cmd, output_maf)
 
-def merge_maf(patient_id,input_maf,std_output_maf,duplex_output_maf,simplex_output_maf):
+
+def merge_maf(
+    patient_id, input_maf, std_output_maf, duplex_output_maf, simplex_output_maf
+):
     pass
-
 
