@@ -1,6 +1,6 @@
 def run(cmd):
     """Code to run shell commands"""
-        logger.debug(
+    logger.debug(
         "run_cmd: run: the commandline is %s",
         cmd.encode("unicode_escape").decode("utf-8"),
     )
