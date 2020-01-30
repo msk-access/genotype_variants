@@ -3,6 +3,7 @@ import sys
 import logging
 import time
 import pathlib
+import subprocess
 from genotype_variants.run_cmd import run_cmd
 
 try:
@@ -146,24 +147,26 @@ def generate(
     std_output_maf = None
     duplex_output_maf = None
     simplex_output_maf = None
+    p1,p2,p3 = None,None,None
     if standard_bam:
-        btype = "standard"
+        btype = "STANDARD"
         (cmd, std_output_maf) = generate_gbcms_cmd(
             input_maf, btype, reference_fasta, gbcms_path, patient_id, standard_bam
         )
-        exit_code = run_cmd(cmd)
+        p1 = run_cmd(cmd)
     if duplex_bam:
-        btype = "duplex"
+        btype = "DUPLEX"
         (cmd, duplex_output_maf) = generate_gbcms_cmd(
             input_maf, btype, reference_fasta, gbcms_path, patient_id, duplex_bam
         )
-        exit_code = run_cmd(cmd)
+        p2 = run_cmd(cmd)
     if simplex_bam:
-        btype = "simplex"
+        btype = "SIMPLEX"
         (cmd, simplex_output_maf) = generate_gbcms_cmd(
             input_maf, btype, reference_fasta, gbcms_path, patient_id, simplex_bam
         )
-        exit_code = run_cmd(cmd)
+        p3 = run_cmd(cmd)
+    exit_codes = [p.wait() for p in p1, p2, p3]
     merge_maf(
         patient_id, input_maf, std_output_maf, duplex_output_maf, simplex_output_maf
     )
@@ -203,7 +206,45 @@ def generate_gbcms_cmd(input_maf, btype, reference_fasta, gbcms_path, patient_id
 
 
 def merge_maf(
-    patient_id, input_maf, std_output_maf, duplex_output_maf, simplex_output_maf
+    patient_id, input_maf, duplex_output_maf, simplex_output_maf
 ):
-    pass
-
+    import numpy as np
+    import re
+    np.seterr(divide='ignore', invalid='ignore')
+    mutation_key = ['Chromosome', 'Start_Position','End_Position','Reference_Allele','Tumor_Seq_Allele2']
+    i_maf = pd.read_csv(input_maf, sep="\t", header="infer", dtype=str)
+    d_maf = pd.read_csv(duplex_output_maf, sep="\t", header="infer", dtype=str)
+    s_maf = pd.read_csv(simplex_output_maf, sep="\t", header="infer", dtype=str)
+    df_merge = create_duplexsimplex(s_maf,d_maf)
+    df_merge.write_csv("test.maf", sep="\t")
+    def create_duplexsimplex(df_s, df_d):
+        df_s = df_s.copy()
+        df_d = df_d.copy()
+        #Prep Simplex
+        df_s.rename(columns = {'t_alt_count_fragment': 't_alt_count_fragment_simplex','t_ref_count_fragment':'t_ref_count_fragment_simplex'}, inplace=True)   
+        df_s['Tumor_Sample_Barcode'] = df_s['Tumor_Sample_Barcode'].str.replace('-SIMPLEX','')
+        df_s.set_index('Tumor_Sample_Barcode', append=True, drop=False, inplace=True)
+        #Prep Duplex
+        df_d.rename(columns = {'t_alt_count_fragment': 't_alt_count_fragment_duplex','t_ref_count_fragment':'t_ref_count_fragment_duplex'}, inplace=True)
+        df_d['Tumor_Sample_Barcode'] = df_d['Tumor_Sample_Barcode'].str.replace('-DUPLEX', '')
+        df_d.set_index('Tumor_Sample_Barcode', append=True, drop=False, inplace=True)
+        #Merge
+        df_ds = df_s.merge(df_d[['t_ref_count_fragment_duplex','t_alt_count_fragment_duplex']], left_index=True, right_index=True)
+        ##Add
+        df_ds['t_ref_count_fragment'] = df_ds['t_ref_count_fragment_simplex'] + df_ds['t_ref_count_fragment_duplex']
+        df_ds['t_alt_count_fragment'] = df_ds['t_alt_count_fragment_simplex'] + df_ds['t_alt_count_fragment_duplex']
+        df_ds['t_total_count_fragment'] = df_ds['t_alt_count_fragment'] + df_ds['t_ref_count_fragment']
+        ##clean up
+        fillout_type = df_ds['Fillout_Type']+'-DUPLEX'
+        df_ds.drop(['Fillout_Type', 't_ref_count_fragment_simplex', 't_ref_count_fragment_duplex', 't_alt_count_fragment_simplex','t_alt_count_fragment_duplex'], axis=1, inplace=True)
+        df_ds['Fillout_Type'] = fillout_type
+        df_ds['Tumor_Sample_Barcode'] = df_ds['Tumor_Sample_Barcode']+'-SIMPLEX-DUPLEX'
+        df_ds.set_index(mutation_key, drop=False, inplace=True)
+        df_ds = find_VAFandsummary(df_ds)
+        return df_ds
+    def find_VAFandsummary(df_fillout): 
+        df_fillout = df_fillout.copy()
+        #find the VAF from the fillout
+        df_fillout['t_vaf_fragment'] = (df_fillout['t_alt_count_fragment'] / (df_fillout['t_alt_count_fragment'].astype(int) + df_fillout['t_ref_count_fragment'].astype(int))).round(4)
+        df_fillout['summary_fragment'] = 'DP='+(df_fillout['t_alt_count_fragment'].astype(int) + df_fillout['t_ref_count_fragment'].astype(int)).astype(str)+';RD='+  df_fillout['t_ref_count_fragment'].astype(str)+';AD='+ df_fillout['t_alt_count_fragment'].astype(str)+';VF='+df_fillout['t_vaf_fragment'].fillna(0).astype(str)
+        return df_fillout
