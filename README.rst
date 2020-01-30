@@ -26,7 +26,14 @@ Project to genotype SNV, INDEL and SV.
 Features
 --------
 
-* TODO
+* Currently genotypes small variants for access data, merging the duplex and simplex calls
+
+ToDo
+----
+
+* Genotype small variants form standard BAM files
+* Integrate results with original MAF
+* Genotype structural variants calls
 
 Credits
 -------
