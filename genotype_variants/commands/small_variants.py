@@ -107,7 +107,7 @@ def cli():
     "-fd",
     "--filter-duplicate",
     required=False,
-    default=0
+    default=0,
     type=click.INT,
     help="Filter duplicate parameter for GetBaseCountMultiSample",
 )
