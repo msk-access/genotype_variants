@@ -265,10 +265,8 @@ def create_duplexsimplex(df_s, df_d):
         df_ds["t_alt_count_fragment"] + df_ds["t_ref_count_fragment"]
     )
     ##clean up
-    fillout_type = df_ds["Fillout_Type"] + "-DUPLEX"
     df_ds.drop(
         [
-            "Fillout_Type",
             "t_ref_count_fragment_simplex",
             "t_ref_count_fragment_duplex",
             "t_alt_count_fragment_simplex",
@@ -277,7 +275,6 @@ def create_duplexsimplex(df_s, df_d):
         axis=1,
         inplace=True,
     )
-    df_ds["Fillout_Type"] = fillout_type
     df_ds["Tumor_Sample_Barcode"] = df_ds["Tumor_Sample_Barcode"] + "-SIMPLEX-DUPLEX"
     df_ds.set_index(mutation_key, drop=False, inplace=True)
     df_ds = find_VAFandsummary(df_ds)
