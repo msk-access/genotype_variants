@@ -3,7 +3,7 @@ import sys
 import logging
 import time
 import pathlib
-import genotype_variants.run_cmd as run_cmd
+from genotype_variants.run_cmd import run_cmd
 
 try:
     import click
