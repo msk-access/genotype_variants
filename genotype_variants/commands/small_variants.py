@@ -168,7 +168,7 @@ def generate(
         p3 = run_cmd(cmd)
     exit_codes = [p.wait() for p in [p1, p2, p3]]
     merge_maf(
-        patient_id, input_maf, std_output_maf, duplex_output_maf, simplex_output_maf
+        patient_id, input_maf, duplex_output_maf, simplex_output_maf
     )
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
