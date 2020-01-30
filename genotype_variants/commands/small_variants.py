@@ -123,7 +123,7 @@ def cli():
     "-mapq",
     "--mapping-quality",
     required=False,
-    default=20
+    default=20,
     type=click.INT,
     help="Mapping quality for GetBaseCountMultiSample",
 )
