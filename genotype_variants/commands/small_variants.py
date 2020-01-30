@@ -103,7 +103,7 @@ def cli():
 def generate(
     input_maf,
     reference_fasta,
-    gbcms_count,
+    gbcms_path,
     patient_id,
     standard_bam,
     duplex_bam,
