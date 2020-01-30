@@ -115,7 +115,7 @@ def cli():
     "-fc",
     "--fragment-count",
     required=False,
-    default=1
+    default=1,
     type=click.INT,
     help="Fragment Count parameter for GetBaseCountMultiSample",
 )
