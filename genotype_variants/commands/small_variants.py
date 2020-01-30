@@ -168,7 +168,7 @@ def generate_gbcms_cmd(input_maf, btype, reference_fasta, gbcms_path, patient_id
     output_maf = pathlib.Path.cwd().joinpath(sample_id + "_genotyped.maf")
 
     cmd = (
-        str(gbcms_path)
+        gbcms_path
         + " --bam "
         + sample_id
         + ":"
@@ -182,7 +182,7 @@ def generate_gbcms_cmd(input_maf, btype, reference_fasta, gbcms_path, patient_id
         + " --output "
         + output_maf
         + " --fasta "
-        + str(reference_fasta)
+        + reference_fasta
         + " --threads 1"
     )
 
