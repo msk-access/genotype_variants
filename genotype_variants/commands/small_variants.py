@@ -210,7 +210,7 @@ def merge_maf(patient_id, input_maf, duplex_output_maf, simplex_output_maf):
     d_maf = pd.read_csv(duplex_output_maf, sep="\t", header="infer")
     s_maf = pd.read_csv(simplex_output_maf, sep="\t", header="infer")
     df_merge = create_duplexsimplex(s_maf, d_maf)
-    df_merge.write_csv("test.maf", sep="\t")
+    df_merge.to_csv("test.maf", sep="\t", index=False)
 
 
 def create_duplexsimplex(df_s, df_d):
