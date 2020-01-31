@@ -172,16 +172,22 @@ def generate(
             "Required to specify at-least one input BAM file option. Please refer to the README for more information"
         )
         exit(1)
-    logger.info("Patient ID: %s", patient_id)
-    logger.info("Input MAF: %s", input_maf)
-    logger.info("Reference FASTA: %s", reference_fasta)
-    logger.info("GetBaseCountMultiSample: %s", gbcms_path)
+
+    logger.info("small_variants: Patient ID: %s", patient_id)
+    logger.info("small_variants: Input MAF: %s", input_maf)
+    logger.info("small_variants: Reference FASTA: %s", reference_fasta)
     if standard_bam:
-        logger.info("Standard BAM: %s", standard_bam)
+        logger.info("small_variants: Standard BAM: %s", standard_bam)
     if duplex_bam:
-        logger.info("Duplex BAM: %s", duplex_bam)
+        logger.info("small_variants: Duplex BAM: %s", duplex_bam)
     if simplex_bam:
-        logger.info("Simplex BAM: %s", simplex_bam)
+        logger.info("small_variants: Simplex BAM: %s", simplex_bam)
+    logger.info("small_variants: GetBaseCountMultiSample -> Path: %s", gbcms_path)
+    logger.info("small_variants: GetBaseCountMultiSample -> Filter Duplicate: %s", str(filter_duplicate))
+    logger.info("small_variants: GetBaseCountMultiSample -> Fragment Count: %s", str(fragment_count))
+    logger.info("small_variants: GetBaseCountMultiSample -> Mapping Quality: %s", str(mapping_quality))
+    logger.info("small_variants: GetBaseCountMultiSample -> Threads: %s", str(threads))
+    
     # Run GetBaseMultisampleCount for each available bam file
     std_output_maf = None
     duplex_output_maf = None
@@ -193,20 +199,28 @@ def generate(
             input_maf, btype, reference_fasta, gbcms_path, patient_id, standard_bam
         )
         p1 = run_cmd(cmd)
+        logger.info("small_variants: Done running gbcms on %s and data has been written to %s", (standard_bam, std_output_maf))
+
     if duplex_bam:
         btype = "DUPLEX"
         (cmd, duplex_output_maf) = generate_gbcms_cmd(
             input_maf, btype, reference_fasta, gbcms_path, patient_id, duplex_bam
         )
         p2 = run_cmd(cmd)
+        logger.info("small_variants: Done running gbcms on %s and data has been written to %s", (duplex_bam, duplex_output_maf))
+
     if simplex_bam:
         btype = "SIMPLEX"
         (cmd, simplex_output_maf) = generate_gbcms_cmd(
             input_maf, btype, reference_fasta, gbcms_path, patient_id, simplex_bam
         )
         p3 = run_cmd(cmd)
+        logger.info("small_variants: Done running gbcms on %s and data has been written to %s", (simplex_bam, simplex_output_maf))
+    
+    #merge if duplex and simplex bam present
+    if(duplex_bam and simplex_bam):
+        merge_maf(patient_id, input_maf, duplex_output_maf, simplex_output_maf)
 
-    merge_maf(patient_id, input_maf, duplex_output_maf, simplex_output_maf)
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
     logger.info("--------------------------------------------------")
@@ -250,11 +264,14 @@ def merge_maf(patient_id, input_maf, duplex_output_maf, simplex_output_maf):
     i_maf = pd.read_csv(input_maf, sep="\t", header="infer")
     d_maf = pd.read_csv(duplex_output_maf, sep="\t", header="infer")
     s_maf = pd.read_csv(simplex_output_maf, sep="\t", header="infer")
-    df_merge = create_duplexsimplex(s_maf, d_maf)
-    df_merge.to_csv("test.maf", sep="\t", index=False)
+    df_merge = create_duplex_simplex_maf(s_maf, d_maf)
+    out_duplex_simplex_maf = pathlib.Path.cwd().joinpath(patient_id + "-SIMPLEX-DUPLEX" + "_genotyped.maf")
+    df_merge.to_csv(out_duplex_simplex_maf, sep="\t", index=False)
+    logger.info("small_variants: merged genotyped data from duplex and simplex bam has been written to %s", out_duplex_simplex_maf)
+    return(out_duplex_simplex_maf)
 
 #Adopted from Maysun script
-def create_duplexsimplex(df_s, df_d):
+def create_duplex_simplex_maf(df_s, df_d):
     np.seterr(divide="ignore", invalid="ignore")
     mutation_key = [
         "Chromosome",
@@ -318,11 +335,11 @@ def create_duplexsimplex(df_s, df_d):
     )
     df_ds["Tumor_Sample_Barcode"] = df_ds["Tumor_Sample_Barcode"] + "-SIMPLEX-DUPLEX"
     df_ds.set_index(mutation_key, drop=False, inplace=True)
-    df_ds = find_VAFandsummary(df_ds)
+    df_ds = generate_summary_field(df_ds)
     return df_ds
 
 
-def find_VAFandsummary(df_fillout):
+def generate_summary_field(df_fillout):
     df_fillout = df_fillout.copy()
     # find the VAF from the fillout
     df_fillout["t_vaf_fragment"] = (

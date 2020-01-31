@@ -6,8 +6,12 @@ To use genotype_variants in a project::
 
     import genotype_variants
 
-To use via command line here are the options::
-    
+
+To use `small_variants generate` via command line here are the options::
+
+    help: 
+    ------
+
     > genotype_variants small_variants generate --help
     Usage: genotype_variants small_variants generate [OPTIONS]
 
@@ -44,3 +48,15 @@ To use via command line here are the options::
     -v, --verbosity LVL             Either CRITICAL, ERROR, WARNING, INFO or
                                     DEBUG
     --help                          Show this message and exit.
+
+
+.. code-block:: console 
+    
+    genotype_variants small_variants generate \
+    -i /path/to/input_maf \
+    -r /path/to/reference_fasta \
+    -g /path/to/GetBaseCountsMultiSample \
+    -p patient_id \
+    -b standard_bam
+    -d duplex_bam \
+    -s simplex_bam 
