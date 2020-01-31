@@ -219,7 +219,7 @@ def generate(
         p1 = run_cmd(cmd)
         logger.info(
             "small_variants: Done running gbcms on %s and data has been written to %s",
-            (standard_bam, std_output_maf),
+            standard_bam, std_output_maf,
         )
 
     if duplex_bam:
@@ -239,7 +239,7 @@ def generate(
         p2 = run_cmd(cmd)
         logger.info(
             "small_variants: Done running gbcms on %s and data has been written to %s",
-            (duplex_bam, duplex_output_maf),
+            duplex_bam, duplex_output_maf,
         )
 
     if simplex_bam:
@@ -259,12 +259,14 @@ def generate(
         p3 = run_cmd(cmd)
         logger.info(
             "small_variants: Done running gbcms on %s and data has been written to %s",
-            (simplex_bam, simplex_output_maf),
+            simplex_bam, simplex_output_maf,
         )
 
     # merge if duplex and simplex bam present
     if duplex_bam and simplex_bam:
         merge_maf(patient_id, input_maf, duplex_output_maf, simplex_output_maf)
+    
+    logger.info("small_variants: Completed processing based on the given instructions")
 
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
