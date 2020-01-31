@@ -172,6 +172,7 @@ def generate(
             "Required to specify at-least one input BAM file option. Please refer to the README for more information"
         )
         exit(1)
+
     logger.info("small_variants: Patient ID: %s", patient_id)
     logger.info("small_variants: Input MAF: %s", input_maf)
     logger.info("small_variants: Reference FASTA: %s", reference_fasta)
@@ -199,6 +200,7 @@ def generate(
         )
         p1 = run_cmd(cmd)
         logger.info("small_variants: Done running gbcms on %s and data has been written to %s", (standard_bam, std_output_maf))
+
     if duplex_bam:
         btype = "DUPLEX"
         (cmd, duplex_output_maf) = generate_gbcms_cmd(
@@ -206,6 +208,7 @@ def generate(
         )
         p2 = run_cmd(cmd)
         logger.info("small_variants: Done running gbcms on %s and data has been written to %s", (duplex_bam, duplex_output_maf))
+
     if simplex_bam:
         btype = "SIMPLEX"
         (cmd, simplex_output_maf) = generate_gbcms_cmd(
@@ -213,10 +216,11 @@ def generate(
         )
         p3 = run_cmd(cmd)
         logger.info("small_variants: Done running gbcms on %s and data has been written to %s", (simplex_bam, simplex_output_maf))
+    
     #merge if duplex and simplex bam present
     if(duplex_bam and simplex_bam):
         merge_maf(patient_id, input_maf, duplex_output_maf, simplex_output_maf)
-    
+
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
     logger.info("--------------------------------------------------")
@@ -260,7 +264,7 @@ def merge_maf(patient_id, input_maf, duplex_output_maf, simplex_output_maf):
     i_maf = pd.read_csv(input_maf, sep="\t", header="infer")
     d_maf = pd.read_csv(duplex_output_maf, sep="\t", header="infer")
     s_maf = pd.read_csv(simplex_output_maf, sep="\t", header="infer")
-    df_merge = reate_duplex_simplex_maf(s_maf, d_maf)
+    df_merge = create_duplex_simplex_maf(s_maf, d_maf)
     out_duplex_simplex_maf = pathlib.Path.cwd().joinpath(patient_id + "-SIMPLEX-DUPLEX" + "_genotyped.maf")
     df_merge.to_csv(out_duplex_simplex_maf, sep="\t", index=False)
     logger.info("small_variants: merged genotyped data from duplex and simplex bam has been written to %s", out_duplex_simplex_maf)

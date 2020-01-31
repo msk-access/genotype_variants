@@ -6,10 +6,12 @@ To use genotype_variants in a project::
 
     import genotype_variants
 
+
 To use `small_variants generate` via command line here are the options::
 
     help: 
     ------
+
     > genotype_variants small_variants generate --help
     Usage: genotype_variants small_variants generate [OPTIONS]
 
@@ -47,6 +49,7 @@ To use `small_variants generate` via command line here are the options::
                                     DEBUG
     --help                          Show this message and exit.
 
+
 .. code-block:: console 
     
     genotype_variants small_variants generate \
@@ -56,4 +59,4 @@ To use `small_variants generate` via command line here are the options::
     -p patient_id \
     -b standard_bam
     -d duplex_bam \
-    -s simplex_bam \
+    -s simplex_bam 
