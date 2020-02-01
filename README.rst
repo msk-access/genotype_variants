@@ -28,8 +28,8 @@ Features
 
 * Currently genotypes small variants for access data, merging the duplex and simplex calls
 
-ToDo
-----
+To Do
+-----
 
 * Genotype small variants form standard BAM files
 * Integrate results with original MAF
