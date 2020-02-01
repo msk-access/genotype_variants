@@ -282,8 +282,8 @@ def create_duplex_simplex_maf(df_s, df_d):
         t_alt_count_fragment
         t_total_count_fragment
 
-    :param df_s:
-    :param df_d:
+    :param df_s: pd.DataFrame from MAF file
+    :param df_d: pd.DataFrame from MAF file
     :return:
     """
     np.seterr(divide="ignore", invalid="ignore")
