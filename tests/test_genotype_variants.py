@@ -42,13 +42,25 @@ class TestGenotype_variants(unittest.TestCase):
         :return:
         """
         df_merge = small_variants.create_duplex_simplex_maf(self.s_maf, self.d_maf)
+        df_merge = df_merge.sort_index()
         expected = pd.read_csv('test_data/expected.maf', sep='\t')
         expected = expected.set_index(self.mutation_key, drop=False)
+        expected = expected.sort_index()
+
         pd.testing.assert_frame_equal(df_merge, expected)
 
-        # Simplex: 409 ref, 0 alt
-        # Duplex: 1140 ref, 1 alt
-        # Should sum to: 1549 ref, 1 alt, 1550 total
-        assert df_merge['t_ref_count_fragment'].values[0] == 1549
-        assert df_merge['t_alt_count_fragment'].values[0] == 1
-        assert df_merge['t_total_count_fragment'].values[0] == 1550
+        # SNP
+        snp_index = (1, 8080157, 8080157, 'T',   'A')
+        assert df_merge.loc[snp_index]['t_ref_count_fragment'] == 1549
+        assert df_merge.loc[snp_index]['t_alt_count_fragment'] == 1
+        assert df_merge.loc[snp_index]['t_total_count_fragment'] == 1550
+        # INS
+        insertion_index = (18, 48584855, 48584855, 'A',   'TTT')
+        assert df_merge.loc[insertion_index]['t_ref_count_fragment'] == 694
+        assert df_merge.loc[insertion_index]['t_alt_count_fragment'] == 4
+        assert df_merge.loc[insertion_index]['t_total_count_fragment'] == 698
+        # DEL
+        deletion_index = (18, 57571783, 57571783, 'T',   '-')
+        assert df_merge.loc[deletion_index]['t_ref_count_fragment'] == 514
+        assert df_merge.loc[deletion_index]['t_alt_count_fragment'] == 6
+        assert df_merge.loc[deletion_index]['t_total_count_fragment'] == 520
