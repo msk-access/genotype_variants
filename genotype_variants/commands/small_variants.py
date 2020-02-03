@@ -147,10 +147,10 @@ def generate(
     filter_duplicate,
     fragment_count,
     mapping_quality,
-    threads,
+    threads
 ):
     """Command that helps to generate genotyped MAF,
-    the output file will be labelled with 
+    the output file will be labelled with
     patient identifier as prefix"""
     logger_output = pathlib.Path.cwd().joinpath("genotype_variants.log")
     fh = logging.FileHandler(logger_output)
@@ -336,6 +336,20 @@ def merge_maf(patient_id, input_maf, duplex_output_maf, simplex_output_maf):
 
 # Adopted from Maysun script
 def create_duplex_simplex_maf(df_s, df_d):
+    """
+    This function takes two pandas DataFrames, one representing Simplex allele values and the other Duplex.
+
+    It will match rows based on the five columns from the mutation_key variable.
+
+    It will then add to get Simplex + Duplex values for these fields:
+        t_ref_count_fragment
+        t_alt_count_fragment
+        t_total_count_fragment
+
+    :param df_s: pd.DataFrame from MAF file
+    :param df_d: pd.DataFrame from MAF file
+    :return:
+    """
     np.seterr(divide="ignore", invalid="ignore")
     mutation_key = [
         "Chromosome",
