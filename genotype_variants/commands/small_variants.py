@@ -144,10 +144,10 @@ def generate(
     standard_bam,
     duplex_bam,
     simplex_bam,
-    filter_duplicate, 
+    filter_duplicate,
     fragment_count,
-    mapping_quality, 
-    threads
+    mapping_quality,
+    threads,
 ):
     """Command that helps to generate genotyped MAF,
     the output file will be labelled with 
@@ -183,11 +183,20 @@ def generate(
     if simplex_bam:
         logger.info("small_variants: Simplex BAM: %s", simplex_bam)
     logger.info("small_variants: GetBaseCountMultiSample -> Path: %s", gbcms_path)
-    logger.info("small_variants: GetBaseCountMultiSample -> Filter Duplicate: %s", str(filter_duplicate))
-    logger.info("small_variants: GetBaseCountMultiSample -> Fragment Count: %s", str(fragment_count))
-    logger.info("small_variants: GetBaseCountMultiSample -> Mapping Quality: %s", str(mapping_quality))
+    logger.info(
+        "small_variants: GetBaseCountMultiSample -> Filter Duplicate: %s",
+        str(filter_duplicate),
+    )
+    logger.info(
+        "small_variants: GetBaseCountMultiSample -> Fragment Count: %s",
+        str(fragment_count),
+    )
+    logger.info(
+        "small_variants: GetBaseCountMultiSample -> Mapping Quality: %s",
+        str(mapping_quality),
+    )
     logger.info("small_variants: GetBaseCountMultiSample -> Threads: %s", str(threads))
-    
+
     # Run GetBaseMultisampleCount for each available bam file
     std_output_maf = None
     duplex_output_maf = None
@@ -196,30 +205,68 @@ def generate(
     if standard_bam:
         btype = "STANDARD"
         (cmd, std_output_maf) = generate_gbcms_cmd(
-            input_maf, btype, reference_fasta, gbcms_path, patient_id, standard_bam
+            input_maf,
+            btype,
+            reference_fasta,
+            gbcms_path,
+            patient_id,
+            standard_bam,
+            filter_duplicate,
+            fragment_count,
+            mapping_quality,
+            threads,
         )
         p1 = run_cmd(cmd)
-        logger.info("small_variants: Done running gbcms on %s and data has been written to %s", (standard_bam, std_output_maf))
+        logger.info(
+            "small_variants: Done running gbcms on %s and data has been written to %s",
+            standard_bam, std_output_maf,
+        )
 
     if duplex_bam:
         btype = "DUPLEX"
         (cmd, duplex_output_maf) = generate_gbcms_cmd(
-            input_maf, btype, reference_fasta, gbcms_path, patient_id, duplex_bam
+            input_maf,
+            btype,
+            reference_fasta,
+            gbcms_path,
+            patient_id,
+            duplex_bam,
+            filter_duplicate,
+            fragment_count,
+            mapping_quality,
+            threads,
         )
         p2 = run_cmd(cmd)
-        logger.info("small_variants: Done running gbcms on %s and data has been written to %s", (duplex_bam, duplex_output_maf))
+        logger.info(
+            "small_variants: Done running gbcms on %s and data has been written to %s",
+            duplex_bam, duplex_output_maf,
+        )
 
     if simplex_bam:
         btype = "SIMPLEX"
         (cmd, simplex_output_maf) = generate_gbcms_cmd(
-            input_maf, btype, reference_fasta, gbcms_path, patient_id, simplex_bam
+            input_maf,
+            btype,
+            reference_fasta,
+            gbcms_path,
+            patient_id,
+            simplex_bam,
+            filter_duplicate,
+            fragment_count,
+            mapping_quality,
+            threads,
         )
         p3 = run_cmd(cmd)
-        logger.info("small_variants: Done running gbcms on %s and data has been written to %s", (simplex_bam, simplex_output_maf))
-    
-    #merge if duplex and simplex bam present
-    if(duplex_bam and simplex_bam):
+        logger.info(
+            "small_variants: Done running gbcms on %s and data has been written to %s",
+            simplex_bam, simplex_output_maf,
+        )
+
+    # merge if duplex and simplex bam present
+    if duplex_bam and simplex_bam:
         merge_maf(patient_id, input_maf, duplex_output_maf, simplex_output_maf)
+    
+    logger.info("small_variants: Completed processing based on the given instructions")
 
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
@@ -230,7 +277,18 @@ def generate(
     return
 
 
-def generate_gbcms_cmd(input_maf, btype, reference_fasta, gbcms_path, patient_id, bam):
+def generate_gbcms_cmd(
+    input_maf,
+    btype,
+    reference_fasta,
+    gbcms_path,
+    patient_id,
+    bam,
+    filter_duplicate,
+    fragment_count,
+    mapping_quality,
+    threads,
+):
     sample_id = patient_id + "-" + btype
     output_maf = pathlib.Path.cwd().joinpath(sample_id + "_genotyped.maf")
 
@@ -265,12 +323,18 @@ def merge_maf(patient_id, input_maf, duplex_output_maf, simplex_output_maf):
     d_maf = pd.read_csv(duplex_output_maf, sep="\t", header="infer")
     s_maf = pd.read_csv(simplex_output_maf, sep="\t", header="infer")
     df_merge = create_duplex_simplex_maf(s_maf, d_maf)
-    out_duplex_simplex_maf = pathlib.Path.cwd().joinpath(patient_id + "-SIMPLEX-DUPLEX" + "_genotyped.maf")
+    out_duplex_simplex_maf = pathlib.Path.cwd().joinpath(
+        patient_id + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
+    )
     df_merge.to_csv(out_duplex_simplex_maf, sep="\t", index=False)
-    logger.info("small_variants: merged genotyped data from duplex and simplex bam has been written to %s", out_duplex_simplex_maf)
-    return(out_duplex_simplex_maf)
+    logger.info(
+        "small_variants: merged genotyped data from duplex and simplex bam has been written to %s",
+        out_duplex_simplex_maf,
+    )
+    return out_duplex_simplex_maf
 
-#Adopted from Maysun script
+
+# Adopted from Maysun script
 def create_duplex_simplex_maf(df_s, df_d):
     np.seterr(divide="ignore", invalid="ignore")
     mutation_key = [
