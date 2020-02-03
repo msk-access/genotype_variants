@@ -15,8 +15,8 @@ class TestGenotype_variants(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures, if any."""
         self.mutation_key = ['Chromosome', 'Start_Position', 'End_Position', 'Reference_Allele', 'Tumor_Seq_Allele1']
-        self.d_maf = pd.read_csv('test_data/test_duplex.maf', sep="\t", header="infer")
-        self.s_maf = pd.read_csv('test_data/test_simplex.maf', sep="\t", header="infer")
+        self.d_maf = pd.read_csv('tests/test_data/test_duplex.maf', sep="\t", header="infer")
+        self.s_maf = pd.read_csv('tests/test_data/test_simplex.maf', sep="\t", header="infer")
         self.d_maf = self.d_maf.set_index(self.mutation_key, drop=False)
         self.s_maf = self.s_maf.set_index(self.mutation_key, drop=False)
 
@@ -43,7 +43,7 @@ class TestGenotype_variants(unittest.TestCase):
         """
         df_merge = small_variants.create_duplex_simplex_maf(self.s_maf, self.d_maf)
         df_merge = df_merge.sort_index()
-        expected = pd.read_csv('test_data/expected.maf', sep='\t')
+        expected = pd.read_csv('tests/test_data/expected.maf', sep='\t')
         expected = expected.set_index(self.mutation_key, drop=False)
         expected = expected.sort_index()
 
