@@ -149,28 +149,28 @@ def create_duplex_simplex_dataframe(simplex_dataframe, create_duplex_simplex_dat
         logger.error("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not create merge data frame for simplex and duplex data due to error, %s", e)
         exit(1)
     ##Add
-try:
-    df_ds["t_ref_count_fragment"] = (
-        df_ds["t_ref_count_fragment_simplex"] + df_ds["t_ref_count_fragment_duplex"]
-    )
-    df_ds["t_alt_count_fragment"] = (
-        df_ds["t_alt_count_fragment_simplex"] + df_ds["t_alt_count_fragment_duplex"]
-    )
-    df_ds["t_total_count_fragment"] = (
-        df_ds["t_alt_count_fragment"] + df_ds["t_ref_count_fragment"]
-    )
-    df_ds["t_vaf_fragment"] = (
-        df_ds["t_alt_count_fragment"]
-        / (
-            df_ds["t_alt_count_fragment"].astype(int)
-            + df_ds["t_ref_count_fragment"].astype(int)
+    try:
+        df_ds["t_ref_count_fragment"] = (
+            df_ds["t_ref_count_fragment_simplex"] + df_ds["t_ref_count_fragment_duplex"]
         )
-    ).round(4)
-    logger.debug("genotype_variants:small_variants:create_duplex_simplex_dataframe:: Successfully renamed samples in Tumor_Sample_Barcode for duplex data frame:: Successfully generated column for merged counts")
-except:
-    e = sys.exc_info()[0]
-    logger.error("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not generate merged count column in the merged data frame due to error, %s", e)
-    exit(1)
+        df_ds["t_alt_count_fragment"] = (
+            df_ds["t_alt_count_fragment_simplex"] + df_ds["t_alt_count_fragment_duplex"]
+        )
+        df_ds["t_total_count_fragment"] = (
+            df_ds["t_alt_count_fragment"] + df_ds["t_ref_count_fragment"]
+        )
+        df_ds["t_vaf_fragment"] = (
+            df_ds["t_alt_count_fragment"]
+            / (
+                df_ds["t_alt_count_fragment"].astype(int)
+                + df_ds["t_ref_count_fragment"].astype(int)
+            )
+        ).round(4)
+        logger.debug("genotype_variants:small_variants:create_duplex_simplex_dataframe:: Successfully renamed samples in Tumor_Sample_Barcode for duplex data frame:: Successfully generated column for merged counts")
+    except:
+        e = sys.exc_info()[0]
+        logger.error("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not generate merged count column in the merged data frame due to error, %s", e)
+        exit(1)
 
     ##clean up
     """
