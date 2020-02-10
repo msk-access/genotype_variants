@@ -108,14 +108,14 @@ def create_duplex_simplex_dataframe(simplex_dataframe, create_duplex_simplex_dat
         exit(1)
     
     try:
-    df_d["t_vaf_fragment_duplex"] = (
-        df_d["t_alt_count_fragment_duplex"]
-        / (
-            df_d["t_alt_count_fragment_duplex"].astype(int)
-            + df_d["t_ref_count_fragment_duplex"].astype(int)
-        )
-    ).round(4)
-    logger.debug("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully generated t_vaf_fragment_duplex column")
+        df_d["t_vaf_fragment_duplex"] = (
+            df_d["t_alt_count_fragment_duplex"]
+            / (
+                df_d["t_alt_count_fragment_duplex"].astype(int)
+                + df_d["t_ref_count_fragment_duplex"].astype(int)
+            )
+        ).round(4)
+        logger.debug("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully generated t_vaf_fragment_duplex column")
     except:
         e = sys.exc_info()[0]
         logger.error("genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not generate t_vaf_fragment_duplex column due to error, %s", e)
