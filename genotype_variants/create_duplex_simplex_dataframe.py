@@ -32,15 +32,15 @@ def create_duplex_simplex_dataframe(simplex_dataframe, create_duplex_simplex_dat
     # Prep Simplex
 
     try:
-    df_s.rename(
-        columns={
-            "t_alt_count_fragment": "t_alt_count_fragment_simplex",
-            "t_ref_count_fragment": "t_ref_count_fragment_simplex",
-            "t_total_count_fragment": "t_total_count_fragment_simplex",
-        },
-        inplace=True,
-    )
-    logger.debug("genotype:variants:small_variants:create_duplex_simplex_dataframe::Successfully renamed column names in simplex data frame")
+        df_s.rename(
+            columns={
+                "t_alt_count_fragment": "t_alt_count_fragment_simplex",
+                "t_ref_count_fragment": "t_ref_count_fragment_simplex",
+                "t_total_count_fragment": "t_total_count_fragment_simplex",
+            },
+            inplace=True,
+        )
+        logger.debug("genotype:variants:small_variants:create_duplex_simplex_dataframe::Successfully renamed column names in simplex data frame")
     except:
         e = sys.exc_info()[0]
         logger.error("genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not rename column names in simplex data frame due to error, %s", e)
@@ -55,24 +55,23 @@ def create_duplex_simplex_dataframe(simplex_dataframe, create_duplex_simplex_dat
         exit(1)
 
     try:
-    df_s["t_vaf_fragment_simplex"] = (
-        df_s["t_alt_count_fragment_simplex"]
-        / (
-            df_s["t_alt_count_fragment_simplex"].astype(int)
-            + df_s["t_ref_count_fragment_simplex"].astype(int)
-        )
-    ).round(4)
-    logger.debug("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully generated t_vaf_fragment_simplex column")
+        df_s["t_vaf_fragment_simplex"] = (
+            df_s["t_alt_count_fragment_simplex"]
+            / (
+                df_s["t_alt_count_fragment_simplex"].astype(int)
+                + df_s["t_ref_count_fragment_simplex"].astype(int)
+            )
+        ).round(4)
+        logger.debug("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully generated t_vaf_fragment_simplex column")
     except:
         e = sys.exc_info()[0]
         logger.error("genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not generate t_vaf_fragment_simplex column due to error, %s", e)
         exit(1)
 
     try:
-    df_s["Tumor_Sample_Barcode"] = df_s["Tumor_Sample_Barcode"].str.replace(
-        "-SIMPLEX", ""
+        df_s["Tumor_Sample_Barcode"] = df_s["Tumor_Sample_Barcode"].str.replace(
+        "-SIMPLEX", "")
         logger.debug("genotype_variants:small_variants:create_duplex_simplex_dataframe:: Successfully renamed samples in Tumor_Sample_Barcode for duplex data frame")
-    )
     except:
         e = sys.exc_info()[0]
         logger.error("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not rename samples in Tumor_Sample_Barcode for simplex data frame, due to error, %s", e)
@@ -86,14 +85,14 @@ def create_duplex_simplex_dataframe(simplex_dataframe, create_duplex_simplex_dat
     
     # Prep Duplex
     try:
-    df_d.rename(
-        columns={
-            "t_alt_count_fragment": "t_alt_count_fragment_duplex",
-            "t_ref_count_fragment": "t_ref_count_fragment_duplex",
-            "t_total_count_fragment": "t_total_count_fragment_duplex",
-        },
-        inplace=True,
-    )
+        df_d.rename(
+            columns={
+                "t_alt_count_fragment": "t_alt_count_fragment_duplex",
+                "t_ref_count_fragment": "t_ref_count_fragment_duplex",
+                "t_total_count_fragment": "t_total_count_fragment_duplex",
+            },
+            inplace=True,
+        )
         logger.debug("genotype:variants:small_variants:create_duplex_simplex_dataframe::Successfully renamed column names in duplex data frame")
     except:
         e = sys.exc_info()[0]
@@ -123,9 +122,8 @@ def create_duplex_simplex_dataframe(simplex_dataframe, create_duplex_simplex_dat
         exit(1)
     
     try:
-    df_d["Tumor_Sample_Barcode"] = df_d["Tumor_Sample_Barcode"].str.replace(
-        "-DUPLEX", ""
-    )
+        df_d["Tumor_Sample_Barcode"] = df_d["Tumor_Sample_Barcode"].str.replace(
+        "-DUPLEX", "")
         logger.debug("genotype_variants:small_variants:create_duplex_simplex_dataframe:: Successfully renamed samples in Tumor_Sample_Barcode for duplex data frame")
     except:
         e = sys.exc_info()[0]

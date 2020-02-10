@@ -7,7 +7,9 @@ import subprocess
 import numpy as np
 import re
 from genotype_variants.run_cmd import run_cmd
-from genotype_variants.create_duplex_simplex_dataframe import create_duplex_simplex_dataframe as cdsd
+from genotype_variants.create_duplex_simplex_dataframe import (
+    create_duplex_simplex_dataframe as cdsd,
+)
 
 try:
     import click
@@ -409,6 +411,3 @@ def merge(
     logger.info("CPU process time: %.1f [min]" % ((t2_stop - t2_start) / 60))
     logger.info("--------------------------------------------------")
     return out_duplex_simplex_maf
-
-
-
