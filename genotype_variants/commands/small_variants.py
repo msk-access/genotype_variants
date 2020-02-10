@@ -10,6 +10,9 @@ from genotype_variants.run_cmd import run_cmd
 from genotype_variants.create_duplex_simplex_dataframe import (
     create_duplex_simplex_dataframe as cdsd,
 )
+from genotype_variants.create_all_maf_dataframe import (
+    create_all_maf_dataframe as camd,
+)
 
 try:
     import click
@@ -400,7 +403,7 @@ def merge(
         if(number_of_variables >= 2):
             pass
         else:
-            logger.error("genotype_variants:small_variants:merge:: Atleast two MAF input need to be provided for us to merge.")
+            logger.error("genotype_variants:small_variants:merge:: At least two MAF input need to be provided for us to merge.")
             exit(1)
     (o_maf,i_maf,d_maf,s_maf) = None
     if(input_maf):
@@ -415,23 +418,43 @@ def merge(
     if(input_simplex_maf):
         s_maf = pd.read_csv(input_simplex_maf, sep="\t", header="infer")
         logger.info("genotype_variants:small_variants:merge:: SIMPLEX BAM MAF -> %s", input_simplex_maf)
+    
+    #generate duplex simplex data frame
     ds_maf = None
     if(d_maf and s_maf):
         ds_maf = cdsd(s_maf, d_maf)
-        #df_mergeout_duplex_simplex_maf = pathlib.Path.cwd().joinpath(
-        #    patient_id + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
-        #)
-        #df_merge.to_csv(out_duplex_simplex_maf, sep="\t", index=False)
-        # Adoptedlogger.info(
-        #    "small_variants: merged genotyped data from duplex and simplex bam has been written to %s",
-        # relative    out_duplex_simplex_maf,
-        #)
-    if(o_maf and i_maf):
-        pass
-    if(o_maf and ds_maf):
-        pass
+    
+    #generate dataframe based on satisfying conditions
+    (df_o_s_ds,df_s_ds,df_s_ds) = None
     if(o_maf and i_maf and ds_maf):
+        df_o_s_ds = camd(o_maf, i_maf, ds_maf)
+        file_name = pathlib.Path.cwd().joinpath(
+            patient_id + "ORG-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
+        )
+        write_csv(file_name, df_o_s_ds)
+    elif(o_maf and i_maf):
         pass
+    elif(o_maf and ds_maf):
+        df_o_ds = camd(o_maf, None, ds_maf)
+    elif(i_maf and ds_maf):
+        df_s_ds = camd(None, i_maf, ds_maf)
+        file_name = pathlib.Path.cwd().joinpath(
+            patient_id + "STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
+        )
+        write_csv(file_name, df_s_ds)
+    elif(i_maf and d_maf):
+        pass
+    elif(i_maf and s_maf):
+        pass
+    elif(o_maf and d_maf):
+        pass
+    elif(o_maf and s_maf):
+        pass
+    else:
+        file_name = pathlib.Path.cwd().joinpath(
+            patient_id + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
+        )
+        write_csv(file_name,ds_maf)
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
     logger.info("--------------------------------------------------")
@@ -439,3 +462,15 @@ def merge(
     logger.info("CPU process time: %.1f [min]" % ((t2_stop - t2_start) / 60))
     logger.info("--------------------------------------------------")
     return out_duplex_simplex_maf
+
+def write_csv(file_name,data_frame):
+    try:
+        data_frame.to_csv(file_name, sep="\t", index=False)
+        logger.info(
+            "genotype_variants:small_variants:create_csv:: merged genotyped data has been written to %s",
+            file_name
+        )
+    except:
+        e = sys.exc_info()[0]
+        logger.error("genotype_variants:small_variants:create_csv:: could not write to CSV file, due to error: %s", e)
+        exit(1)

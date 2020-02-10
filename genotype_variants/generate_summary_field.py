@@ -16,6 +16,7 @@ logger = logging.getLogger("genotype_variants")
 
 
 def generate_summary_field(df_fillout):
+    """Code to Generate Summary Field"""
     np.seterr(divide="ignore", invalid="ignore")
     df_fillout = df_fillout.copy()
     df_fillout["summary_fragment"] = (

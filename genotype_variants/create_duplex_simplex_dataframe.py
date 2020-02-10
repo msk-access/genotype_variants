@@ -9,14 +9,16 @@ create_duplex_simplex_dataframe
 """
 """
 Created on February 10, 2020
-Description: Code to run shell commands
+Description: Code to merge duplex and simplex fragment counts in MAF format
 @author: Ronak H Shah & Maysun Hasan
 """
 # Making logging possible
 logger = logging.getLogger("genotype_variants")
 logger.info("genotype:variants:small_variants::create_duplex_simplex_dataframe:: Generating duplex simplex dataframe")
 # Adopted from Maysun script
-def create_duplex_simplex_dataframe(simplex_dataframe, create_duplex_simplex_dataframe):
+def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
+    """Code to merge duplex and simplex fragment counts in MAF format
+    """
     np.seterr(divide="ignore", invalid="ignore")
     mutation_key = [
         "Chromosome",
