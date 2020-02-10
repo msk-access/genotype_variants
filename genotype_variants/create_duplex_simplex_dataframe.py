@@ -127,14 +127,14 @@ def create_duplex_simplex_dataframe(simplex_dataframe, create_duplex_simplex_dat
         logger.debug("genotype_variants:small_variants:create_duplex_simplex_dataframe:: Successfully renamed samples in Tumor_Sample_Barcode for duplex data frame")
     except:
         e = sys.exc_info()[0]
-        logger.error("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not rename samples in Tumor_Sample_Barcode for duplex data frame, due to error, %s", % e")
+        logger.error("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not rename samples in Tumor_Sample_Barcode for duplex data frame, due to error, %s", e)
 
     try:
         df_d.set_index("Tumor_Sample_Barcode", append=True, drop=False, inplace=True)
         logger.debug("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully reset the index for duplex data frame")
     except:
         e = sys.exc_info()[0]
-        logger.error("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not reset the index for duplex data frame, due to error, %s", % e")
+        logger.error("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not reset the index for duplex data frame, due to error, %s", e)
     
     # Merge
     try:
@@ -146,7 +146,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, create_duplex_simplex_dat
         logger.info("genotype_variants:small_variants:create_duplex_simplex_dataframe:: Successfully created merge data frame for simplex and duplex data")
     except:
         e = sys.exc_info()[0]
-        logger.error("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not create merge data frame for simplex and duplex data due to error, %s", % e)
+        logger.error("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not create merge data frame for simplex and duplex data due to error, %s", e)
         exit(1)
     ##Add
 try:
@@ -191,14 +191,14 @@ except:
         logger.debug("genotype_variants:small_variants:create_duplex_simplex_dataframe:: Successfully renamed samples in Tumor_Sample_Barcode for merged data frame")
     except:
         e = sys.exc_info()[0]
-        logger.error("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not rename samples in Tumor_Sample_Barcode for merged data frame, due to error, %s", % e")
+        logger.error("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not rename samples in Tumor_Sample_Barcode for merged data frame, due to error, %s", e)
 
     try:
         df_ds.set_index(mutation_key, drop=False, inplace=True)
         logger.debug("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully reset the index for merged data frame")
     except:
         e = sys.exc_info()[0]
-        logger.error("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not reset the index for merged data frame, due to error, %s", % e")
+        logger.error("genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not reset the index for merged data frame, due to error, %s", e)
     
     logger.info("Successfully merged data frame and the counts for simplex and duplex MAF")
     return df_ds
