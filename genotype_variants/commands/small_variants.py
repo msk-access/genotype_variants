@@ -398,13 +398,13 @@ def merge(
     for status in (input_maf, input_standard_maf, input_duplex_maf, input_simplex_maf):
         if status:
             number_of_variables += 1
-        if number_of_variables >= 2:
-            pass
-        else:
-            logger.error(
-                "genotype_variants:small_variants:merge:: At least two MAF input need to be provided for us to merge."
-            )
-            exit(1)
+    if number_of_variables >= 2:
+        pass
+    else:
+        logger.error(
+            "genotype_variants:small_variants:merge:: At least two MAF input need to be provided for us to merge."
+        )
+        exit(1)
     (o_maf, i_maf, d_maf, s_maf) = None
     if input_maf:
         logger.info(
@@ -435,12 +435,12 @@ def merge(
     if d_maf and s_maf:
         ds_maf = cdsd(s_maf, d_maf)
 
-    # generate dataframe based on satisfying conditions
+    # generate data frame based on satisfying conditions
     (df_o_s_ds, df_s_ds, df_s_ds) = None
     if o_maf and i_maf and ds_maf:
         df_o_s_ds = camd(o_maf, i_maf, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
-            patient_id + "ORG-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
+            patient_id + "-ORG-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, df_o_s_ds)
     elif o_maf and i_maf:
@@ -450,7 +450,7 @@ def merge(
     elif i_maf and ds_maf:
         df_s_ds = camd(None, i_maf, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
-            patient_id + "STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
+            patient_id + "-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, df_s_ds)
     elif i_maf and d_maf:
