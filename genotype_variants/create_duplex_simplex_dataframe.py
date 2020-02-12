@@ -27,7 +27,6 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         "Start_Position",
         "End_Position",
         "Reference_Allele",
-        "Tumor_Seq_Allele1",
         "Tumor_Seq_Allele2",
     ]
     df_s = simplex_dataframe.copy()
@@ -54,6 +53,21 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         e = sys.exc_info()[0]
         logger.error(
             "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not rename column names in simplex data frame due to error, %s",
+            e,
+        )
+        exit(1)
+
+    try:
+        df_s["Tumor_Seq_Allele2"] = (
+            df_s["Tumor_Seq_Allele1"]
+        )
+        logger.debug(
+            "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Successfully generated Tumor_Seq_Allele2 column"
+        )
+    except:
+        e = sys.exc_info()[0]
+        logger.error(
+            "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not generate Tumor_Seq_Allele2 column due to error, %s",
             e,
         )
         exit(1)
@@ -108,7 +122,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         )
 
     try:
-        df_s.set_index("Tumor_Sample_Barcode", append=True, drop=False, inplace=True)
+        df_s.set_index(mutation_key, drop=False, inplace=True)
         logger.debug(
             "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully reset the index for simplex data frame"
         )
@@ -136,6 +150,21 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         e = sys.exc_info()[0]
         logger.error(
             "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not rename column names in duplex data frame due to error, %s",
+            e,
+        )
+        exit(1)
+
+    try:
+        df_d["Tumor_Seq_Allele2"] = (
+            df_d["Tumor_Seq_Allele1"]
+        )
+        logger.debug(
+            "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Successfully generated Tumor_Seq_Allele2 column"
+        )
+    except:
+        e = sys.exc_info()[0]
+        logger.error(
+            "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not generate Tumor_Seq_Allele2 column due to error, %s",
             e,
         )
         exit(1)
@@ -189,7 +218,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         )
 
     try:
-        df_d.set_index("Tumor_Sample_Barcode", append=True, drop=False, inplace=True)
+        df_d.set_index(mutation_key, drop=False, inplace=True)
         logger.debug(
             "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully reset the index for duplex data frame"
         )
