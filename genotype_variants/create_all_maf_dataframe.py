@@ -188,7 +188,7 @@ def create_all_maf_dataframe(
     df_s_ds = None
     if df_ds is not None and df_s is not None:
         try:
-            df_ds.reindex(df_s.index)
+            df_ds = df_ds.reindex(df_s.index)
             df_s_ds = df_s.merge(
                 df_ds[
                     [
@@ -235,7 +235,7 @@ def create_all_maf_dataframe(
     df_s_ds = None
     if df_s_ds is not None:
         try:
-            df_ds.reindex(df_o.index)
+            df_ds = df_ds.reindex(df_o.index)
             df_o_s_ds = df_o.merge(
                 df_s_ds[
                     [
@@ -282,7 +282,7 @@ def create_all_maf_dataframe(
     df_o_ds = None
     if df_ds is not None and df_o is not None:
         try:
-            df_ds.reindex(df_o.index)
+            df_ds = df_ds.reindex(df_o.index)
             df_o_ds = df_o.merge(
                 df_ds[
                     [
