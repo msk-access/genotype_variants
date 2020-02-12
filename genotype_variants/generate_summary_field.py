@@ -2,7 +2,7 @@ import logging
 import numpy as np
 
 """
-create_duplex_simplex_dataframe
+generate_summary_field
 ~~~~~~~~~~~~~~~
 :Description: Code to Generate Summary Field
 """
