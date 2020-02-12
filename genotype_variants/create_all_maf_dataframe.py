@@ -31,10 +31,13 @@ def create_all_maf_dataframe(original_dataframe, standard_dataframe, simplex_dup
     (df_ds,df_s,df_o) = None
     if(simplex_duplex_dataframe):
         df_ds = simplex_duplex_dataframe.copy()
+        df_ds.sort_values(["Chromosome", "Start_Position", "End_Position"],inplace=True)
     if(standard_dataframe):
         df_s = standard_dataframe.copy()
+        df_s.sort_values(["Chromosome", "Start_Position", "End_Position"],inplace=True)
     if(original_dataframe):
         df_o = original_dataframe.copy()
+        df_o.sort_values(["Chromosome", "Start_Position", "End_Position"],inplace=True)
 
     # Prep Simplex duplex
     if(df_ds):
@@ -130,7 +133,20 @@ def create_all_maf_dataframe(original_dataframe, standard_dataframe, simplex_dup
     if(df_ds and df_s):
         try:
             df_s_ds = df_s.merge(
-                df_ds[["t_ref_count_fragment_simplex_duplex", "t_alt_count_fragment_simplex_duplex","t_total_count_fragment_simplex_duplex","t_vaf_fragment_simplex_duplex"]],
+                df_ds[[
+                    "t_ref_count_fragment_simplex",
+                    "t_alt_count_fragment_simplex",
+                    "t_total_count_fragment_simplex",
+                    "t_vaf_fragment_simplex",
+                    "t_ref_count_fragment_duplex",
+                    "t_alt_count_fragment_duplex",
+                    "t_total_count_fragment_duplex",
+                    "t_vaf_fragment_duplex",
+                    "t_ref_count_fragment_simplex_duplex", 
+                    "t_alt_count_fragment_simplex_duplex",
+                    "t_total_count_fragment_simplex_duplex",
+                    "t_vaf_fragment_simplex_duplex"
+                ]],
                 left_index=True,
                 right_index=True,
             )
@@ -151,7 +167,20 @@ def create_all_maf_dataframe(original_dataframe, standard_dataframe, simplex_dup
     if(df_s_ds):
         try:
             df_o_s_ds = df_o.merge(
-                df_s_ds[["t_ref_count_fragment_simplex_duplex", "t_alt_count_fragment_simplex_duplex","t_total_count_fragment_simplex_duplex","t_vaf_fragment_simplex_duplex"]],
+                df_s_ds[[
+                    "t_ref_count_fragment_simplex",
+                    "t_alt_count_fragment_simplex",
+                    "t_total_count_fragment_simplex",
+                    "t_vaf_fragment_simplex",
+                    "t_ref_count_fragment_duplex",
+                    "t_alt_count_fragment_duplex",
+                    "t_total_count_fragment_duplex",
+                    "t_vaf_fragment_duplex",
+                    "t_ref_count_fragment_simplex_duplex", 
+                    "t_alt_count_fragment_simplex_duplex",
+                    "t_total_count_fragment_simplex_duplex",
+                    "t_vaf_fragment_simplex_duplex"
+                    ]],
                 left_index=True,
                 right_index=True,
             )
@@ -172,7 +201,20 @@ def create_all_maf_dataframe(original_dataframe, standard_dataframe, simplex_dup
     if(df_ds, df_o):
         try:
             df_o_ds = df_o.merge(
-                df_ds[["t_ref_count_fragment_simplex_duplex", "t_alt_count_fragment_simplex_duplex","t_total_count_fragment_simplex_duplex","t_vaf_fragment_simplex_duplex"]],
+                df_ds[[
+                    "t_ref_count_fragment_simplex",
+                    "t_alt_count_fragment_simplex",
+                    "t_total_count_fragment_simplex",
+                    "t_vaf_fragment_simplex",
+                    "t_ref_count_fragment_duplex",
+                    "t_alt_count_fragment_duplex",
+                    "t_total_count_fragment_duplex",
+                    "t_vaf_fragment_duplex",
+                    "t_ref_count_fragment_simplex_duplex", 
+                    "t_alt_count_fragment_simplex_duplex",
+                    "t_total_count_fragment_simplex_duplex",
+                    "t_vaf_fragment_simplex_duplex"
+                    ]],
                 left_index=True,
                 right_index=True,
             )

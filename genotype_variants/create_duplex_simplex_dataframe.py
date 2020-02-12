@@ -31,6 +31,9 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
     df_s = simplex_dataframe.copy()
     df_d = duplex_dataframe.copy()
 
+#Sort Both data frames to make sure the order is maintained.
+df_s.sort_values(["Chromosome", "Start_Position", "End_Position"],inplace=True)
+df_d.sort_values(["Chromosome", "Start_Position", "End_Position"],inplace=True)
     # Prep Simplex
 
     try:
