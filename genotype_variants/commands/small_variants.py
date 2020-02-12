@@ -432,6 +432,7 @@ def merge(
 
     # generate duplex simplex data frame
     ds_maf = None
+    file_name = None
     if d_maf is not None and s_maf is not None:
         ds_maf = cdsd(s_maf, d_maf)
 
