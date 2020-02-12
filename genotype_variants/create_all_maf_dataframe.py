@@ -246,7 +246,7 @@ def create_all_maf_dataframe(
             )
 
     # Merge Original with STANDARD-DUPLEX-SIMPLEX data frame
-    df_s_ds = None
+    df_o_s_ds = None
     if df_s_ds is not None:
         try:
             df_ds = df_ds.reindex(df_o.index)
