@@ -398,7 +398,7 @@ def merge(
 
     number_of_variables = 0
     for status in (input_maf, input_standard_maf, input_duplex_maf, input_simplex_maf):
-        if status not None:
+        if (status):
             number_of_variables += 1
         if(number_of_variables >= 2):
             pass
