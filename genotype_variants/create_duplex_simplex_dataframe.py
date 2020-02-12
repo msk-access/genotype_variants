@@ -60,8 +60,8 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
 
     try:
         df_s["t_total_count_fragment_simplex"] = (
-            df_ds["t_ref_count_fragment_simplex"]
-            + df_ds["t_alt_count_fragment_simplex"]
+            df_s["t_ref_count_fragment_simplex"]
+            + df_s["t_alt_count_fragment_simplex"]
         )
         logger.debug(
             "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Successfully generated t_total_count_fragment_simplex column"
@@ -142,7 +142,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
 
     try:
         df_d["t_total_count_fragment_duplex"] = (
-            df_ds["t_ref_count_fragment_duplex"] + df_ds["t_alt_count_fragment_duplex"]
+            df_d["t_ref_count_fragment_duplex"] + df_d["t_alt_count_fragment_duplex"]
         )
         logger.debug(
             "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Successfully generated t_total_count_fragment_duplex column"
