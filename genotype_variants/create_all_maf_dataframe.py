@@ -37,10 +37,8 @@ def create_all_maf_dataframe(
         df_ds = simplex_duplex_dataframe.copy()
     if standard_dataframe is not None:
         df_s = standard_dataframe.copy()
-        df_s.sort_values(["Chromosome", "Start_Position", "End_Position"], inplace=True)
     if original_dataframe is not None:
         df_o = original_dataframe.copy()
-        df_o.sort_values(["Chromosome", "Start_Position", "End_Position"], inplace=True)
 
     # Prep Simplex duplex
     if df_ds is not None:
@@ -81,7 +79,7 @@ def create_all_maf_dataframe(
 
         try:
             df_ds.set_index(
-                "Tumor_Sample_Barcode", append=True, drop=False, inplace=True
+                mutation_key, append=True, drop=False, inplace=True
             )
             logger.debug(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Successfully reset the index for simplex duplex data frame"
@@ -158,7 +156,7 @@ def create_all_maf_dataframe(
 
         try:
             df_d.set_index(
-                "Tumor_Sample_Barcode", append=True, drop=False, inplace=True
+                mutation_key, append=True, drop=False, inplace=True
             )
             logger.debug(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Successfully reset the index for standard data frame"
@@ -174,7 +172,7 @@ def create_all_maf_dataframe(
     if df_o is not None:
         try:
             df_o.set_index(
-                "Tumor_Sample_Barcode", append=True, drop=False, inplace=True
+                mutation_key, append=True, drop=False, inplace=True
             )
             logger.debug(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Successfully reset the index for original data frame"
@@ -190,6 +188,7 @@ def create_all_maf_dataframe(
     df_s_ds = None
     if df_ds is not None and df_s is not None:
         try:
+            df_ds.reindex(df_s.index)
             df_s_ds = df_s.merge(
                 df_ds[
                     [
@@ -236,6 +235,7 @@ def create_all_maf_dataframe(
     df_s_ds = None
     if df_s_ds is not None:
         try:
+            df_ds.reindex(df_o.index)
             df_o_s_ds = df_o.merge(
                 df_s_ds[
                     [
@@ -282,6 +282,7 @@ def create_all_maf_dataframe(
     df_o_ds = None
     if df_ds is not None and df_o is not None:
         try:
+            df_ds.reindex(df_o.index)
             df_o_ds = df_o.merge(
                 df_ds[
                     [
