@@ -405,7 +405,7 @@ def merge(
             "genotype_variants:small_variants:merge:: At least two MAF input need to be provided for us to merge."
         )
         exit(1)
-    (o_maf, i_maf, d_maf, s_maf) = None
+    o_maf, i_maf, d_maf, s_maf = None
     if input_maf:
         logger.info(
             "genotype_variants:small_variants:merge:: Original MAF -> %s", input_maf
