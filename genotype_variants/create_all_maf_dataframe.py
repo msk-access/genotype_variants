@@ -32,13 +32,13 @@ def create_all_maf_dataframe(
         "Tumor_Seq_Allele1",
         "Tumor_Seq_Allele2",
     ]
-    (df_ds, df_s, df_o) = None
-    if simplex_duplex_dataframe:
+    (df_ds, df_s, df_o) = None, None, None
+    if simplex_duplex_dataframe is not None:
         df_ds = simplex_duplex_dataframe.copy()
         df_ds.sort_values(
             ["Chromosome", "Start_Position", "End_Position"], inplace=True
         )
-    if standard_dataframe:
+    if standard_dataframe is not None:
         df_s = standard_dataframe.copy()
         df_s.sort_values(["Chromosome", "Start_Position", "End_Position"], inplace=True)
     if original_dataframe:
@@ -46,7 +46,7 @@ def create_all_maf_dataframe(
         df_o.sort_values(["Chromosome", "Start_Position", "End_Position"], inplace=True)
 
     # Prep Simplex duplex
-    if df_ds:
+    if df_ds is not None is not None:
         try:
             df_ds.rename(
                 columns={
@@ -97,7 +97,7 @@ def create_all_maf_dataframe(
             )
 
     # Prep Standard
-    if df_s:
+    if df_s is not None:
         try:
             df_s.rename(
                 columns={
@@ -174,7 +174,7 @@ def create_all_maf_dataframe(
             )
 
     # Prep Original
-    if df_o:
+    if df_o is not None:
         try:
             df_o.set_index(
                 "Tumor_Sample_Barcode", append=True, drop=False, inplace=True
@@ -191,7 +191,7 @@ def create_all_maf_dataframe(
 
     # Merge STANDARD with DUPLEX-SIMPLEX data frame
     df_s_ds = None
-    if df_ds and df_s:
+    if df_ds is not None and df_s is not None:
         try:
             df_s_ds = df_s.merge(
                 df_ds[
@@ -237,7 +237,7 @@ def create_all_maf_dataframe(
 
     # Merge Original with STANDARD-DUPLEX-SIMPLEX data frame
     df_s_ds = None
-    if df_s_ds:
+    if df_s_ds is not None:
         try:
             df_o_s_ds = df_o.merge(
                 df_s_ds[
@@ -283,7 +283,7 @@ def create_all_maf_dataframe(
             )
 
     df_o_ds = None
-    if (df_ds, df_o):
+    if df_ds is not None and df_o is not None:
         try:
             df_o_ds = df_o.merge(
                 df_ds[
@@ -330,9 +330,9 @@ def create_all_maf_dataframe(
 
     logger.info("Successfully merged data frame")
 
-    if df_o_s_ds:
+    if df_o_s_ds is not None:
         return df_o_s_ds
-    elif df_o_ds:
+    elif df_o_ds is not None:
         return df_o_ds
     else:
         return df_s_ds

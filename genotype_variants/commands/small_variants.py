@@ -432,34 +432,34 @@ def merge(
 
     # generate duplex simplex data frame
     ds_maf = None
-    if d_maf and s_maf:
+    if d_maf is not None and s_maf is not None:
         ds_maf = cdsd(s_maf, d_maf)
 
     # generate data frame based on satisfying conditions
-    (df_o_s_ds, df_s_ds, df_s_ds) = None
-    if o_maf and i_maf and ds_maf:
+    (df_o_s_ds, df_s_ds, df_s_ds) = None, None, None
+    if o_maf is not None and i_maf is not None and ds_maf is not None:
         df_o_s_ds = camd(o_maf, i_maf, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
             patient_id + "-ORG-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, df_o_s_ds)
-    elif o_maf and i_maf:
+    elif o_maf is not None and i_maf is not None:
         pass
-    elif o_maf and ds_maf:
+    elif o_maf is not None and ds_maf is not None:
         df_o_ds = camd(o_maf, None, ds_maf)
-    elif i_maf and ds_maf:
+    elif i_maf is not None and ds_maf is not None:
         df_s_ds = camd(None, i_maf, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
             patient_id + "-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, df_s_ds)
-    elif i_maf and d_maf:
+    elif i_maf is not None and d_maf is not None:
         pass
-    elif i_maf and s_maf:
+    elif i_maf is not None and s_maf is not None:
         pass
-    elif o_maf and d_maf:
+    elif o_maf is not None and d_maf is not None:
         pass
-    elif o_maf and s_maf:
+    elif o_maf is not None and s_maf is not None:
         pass
     else:
         file_name = pathlib.Path.cwd().joinpath(
