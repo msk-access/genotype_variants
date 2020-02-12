@@ -16,7 +16,7 @@ genotype_variants
 
 
 
-Project to genotype SNV, INDEL and SV.
+Project to genotype SNV, INDELS and SV.
 
 
 * Free software: Apache Software License 2.0
@@ -26,14 +26,25 @@ Project to genotype SNV, INDEL and SV.
 Features
 --------
 
-* Currently genotypes small variants for access data, merging the duplex and simplex calls
+Currently this module only supports genotyping and merging small variants (SNV and INDELS).
+
+For this we have the following command line submodule called **small_variants**. 
+
+Which have the following sub-commands:
+
+* **generate**: To run GetBaseCountMultiSample on given BAM files
+* **merge**: To merge MAF format files w.r.t counts generated from the `generate` command.
+* **all**: This will run both of the sub-commands above `generate` and `merge` togather.
+
+**Please read the USAGE section for more information**
 
 To Do
 -----
 
-* Genotype small variants form standard BAM files
-* Integrate results with original MAF
+* Tagging genotyped files for thresholds
+* Genotyping normal buffy coats
 * Genotype structural variants calls
+
 
 Credits
 -------
