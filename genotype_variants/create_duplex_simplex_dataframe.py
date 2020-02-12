@@ -282,7 +282,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         )
 
     try:
-        df_ds.set_index(mutation_key, drop=False, inplace=True)
+        df_ds.set_index("Tumor_Sample_Barcode", drop=False, inplace=True)
         logger.debug(
             "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully reset the index for merged data frame"
         )
