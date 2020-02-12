@@ -38,12 +38,12 @@ def create_all_maf_dataframe(
     if standard_dataframe is not None:
         df_s = standard_dataframe.copy()
         df_s.sort_values(["Chromosome", "Start_Position", "End_Position"], inplace=True)
-    if original_dataframe:
+    if original_dataframe is not None:
         df_o = original_dataframe.copy()
         df_o.sort_values(["Chromosome", "Start_Position", "End_Position"], inplace=True)
 
     # Prep Simplex duplex
-    if df_ds is not None is not None:
+    if df_ds is not None:
         try:
             df_ds.rename(
                 columns={
