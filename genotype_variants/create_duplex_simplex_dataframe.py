@@ -32,10 +32,6 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
     df_s = simplex_dataframe.copy()
     df_d = duplex_dataframe.copy()
 
-    # Sort Both data frames to make sure the order is maintained.
-    df_s.sort_values(["Chromosome", "Start_Position", "End_Position"], inplace=True)
-    df_d.sort_values(["Chromosome", "Start_Position", "End_Position"], inplace=True)
-
     # Prep Simplex
     try:
         df_s.rename(
@@ -58,9 +54,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         exit(1)
 
     try:
-        df_s["Tumor_Seq_Allele2"] = (
-            df_s["Tumor_Seq_Allele1"]
-        )
+        df_s["Tumor_Seq_Allele2"] = df_s["Tumor_Seq_Allele1"]
         logger.debug(
             "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Successfully generated Tumor_Seq_Allele2 column"
         )
@@ -74,8 +68,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
 
     try:
         df_s["t_total_count_fragment_simplex"] = (
-            df_s["t_ref_count_fragment_simplex"]
-            + df_s["t_alt_count_fragment_simplex"]
+            df_s["t_ref_count_fragment_simplex"] + df_s["t_alt_count_fragment_simplex"]
         )
         logger.debug(
             "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Successfully generated t_total_count_fragment_simplex column"
@@ -96,6 +89,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
                 + df_s["t_ref_count_fragment_simplex"].astype(int)
             )
         ).round(4)
+        df_s["t_vaf_fragment_simplex"].fillna(0, inplace=True)
         logger.debug(
             "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully generated t_vaf_fragment_simplex column"
         )
@@ -155,9 +149,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         exit(1)
 
     try:
-        df_d["Tumor_Seq_Allele2"] = (
-            df_d["Tumor_Seq_Allele1"]
-        )
+        df_d["Tumor_Seq_Allele2"] = df_d["Tumor_Seq_Allele1"]
         logger.debug(
             "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Successfully generated Tumor_Seq_Allele2 column"
         )
@@ -192,6 +184,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
                 + df_d["t_ref_count_fragment_duplex"].astype(int)
             )
         ).round(4)
+        df_d["t_vaf_fragment_duplex"].fillna(0, inplace=True)
         logger.debug(
             "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully generated t_vaf_fragment_duplex column"
         )
@@ -231,6 +224,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
 
     # Merge
     try:
+        df_d.reindex(df_s.index)
         df_ds = df_s.merge(
             df_d[
                 [
@@ -255,22 +249,24 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         exit(1)
     ##Add
     try:
-        df_ds["t_ref_count_fragment"] = (
+        df_ds["t_ref_count_fragment_simplex_duplex"] = (
             df_ds["t_ref_count_fragment_simplex"] + df_ds["t_ref_count_fragment_duplex"]
         )
-        df_ds["t_alt_count_fragment"] = (
+        df_ds["t_alt_count_fragment_simplex_duplex"] = (
             df_ds["t_alt_count_fragment_simplex"] + df_ds["t_alt_count_fragment_duplex"]
         )
-        df_ds["t_total_count_fragment"] = (
-            df_ds["t_alt_count_fragment"] + df_ds["t_ref_count_fragment"]
+        df_ds["t_total_count_fragment_simplex_duplex"] = (
+            df_ds["t_alt_count_fragment_simplex_duplex"]
+            + df_ds["t_ref_count_fragment_simplex_duplex"]
         )
-        df_ds["t_vaf_fragment"] = (
-            df_ds["t_alt_count_fragment"]
+        df_ds["t_vaf_fragment_simplex_duplex"] = (
+            df_ds["t_alt_count_fragment_simplex_duplex"]
             / (
-                df_ds["t_alt_count_fragment"].astype(int)
-                + df_ds["t_ref_count_fragment"].astype(int)
+                df_ds["t_alt_count_fragment_simplex_duplex"].astype(int)
+                + df_ds["t_ref_count_fragment_simplex_duplex"].astype(int)
             )
         ).round(4)
+        df_ds["t_vaf_fragment_simplex_duplex"].fillna(0, inplace=True)
         logger.debug(
             "genotype_variants:small_variants:create_duplex_simplex_dataframe:: Successfully generated column for merged counts"
         )
@@ -283,18 +279,31 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         exit(1)
 
     ##clean up
-    """
-    df_ds.drop(
-        [
-            "t_ref_count_fragment_simplex",
-            "t_ref_count_fragment_duplex",
-            "t_alt_count_fragment_simplex",
-            "t_alt_count_fragment_duplex",
-        ],
-        axis=1,
-        inplace=True,
-    )
-    """
+    try:
+        df_ds.drop(
+            [
+                "t_ref_count",
+                "t_ref_count_forward",
+                "t_alt_count",
+                "t_alt_count_forward",
+                "t_total_count",
+                "t_total_count_forward",
+                "t_variant_frequency",
+            ],
+            axis=1,
+            inplace=True,
+        )
+        logger.debug(
+            "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully dropped columns after merge"
+        )
+    except:
+        e = sys.exc_info()[0]
+        logger.error(
+            "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not drop columns after merge, %s",
+            e,
+        )
+        exit(1)
+
     # Rename Sample Names
     try:
         df_ds["Tumor_Sample_Barcode"] = (
@@ -309,7 +318,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
             "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not rename samples in Tumor_Sample_Barcode for merged data frame, due to error, %s",
             e,
         )
-    
+
     try:
         df_ds.set_index(mutation_key, drop=False, inplace=True)
         logger.debug(
@@ -321,7 +330,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
             "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not reset the index for merged data frame, due to error, %s",
             e,
         )
-    
+
     logger.info(
         "Successfully merged data frame and the counts for simplex and duplex MAF"
     )

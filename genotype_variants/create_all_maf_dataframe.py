@@ -42,27 +42,6 @@ def create_all_maf_dataframe(
     # Prep Simplex duplex
     if df_ds is not None:
         try:
-            df_ds.rename(
-                columns={
-                    "t_alt_count_fragment": "t_alt_count_fragment_simplex_duplex",
-                    "t_ref_count_fragment": "t_ref_count_fragment_simplex_duplex",
-                    "t_total_count_fragment": "t_total_count_fragment_simplex_duplex",
-                    "t_vaf_fragment": "t_vaf_fragment_simplex_duplex",
-                },
-                inplace=True,
-            )
-            logger.debug(
-                "genotype:variants:small_variants:create_all_maf_dataframe::Successfully renamed column names in simplex duplex data frame"
-            )
-        except:
-            e = sys.exc_info()[0]
-            logger.error(
-                "genotype:variants:small_variants::create_all_maf_dataframe:: Could not rename column names in simplex duplex data frame due to error, %s",
-                e,
-            )
-            exit(1)
-
-        try:
             df_ds["Tumor_Sample_Barcode"] = df_ds["Tumor_Sample_Barcode"].str.replace(
                 "-SIMPLEX-DUPLEX", ""
             )
@@ -77,9 +56,7 @@ def create_all_maf_dataframe(
             )
 
         try:
-            df_ds.set_index(
-                mutation_key, drop=False, inplace=True
-            )
+            df_ds.set_index(mutation_key, drop=False, inplace=True)
             logger.debug(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Successfully reset the index for simplex duplex data frame"
             )
@@ -117,9 +94,7 @@ def create_all_maf_dataframe(
             exit(1)
 
         try:
-            df_s["Tumor_Seq_Allele2"] = (
-                df_s["Tumor_Seq_Allele1"]
-            )
+            df_s["Tumor_Seq_Allele2"] = df_s["Tumor_Seq_Allele1"]
             logger.debug(
                 "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Successfully generated Tumor_Seq_Allele2 column"
             )
@@ -169,9 +144,7 @@ def create_all_maf_dataframe(
             )
 
         try:
-            df_d.set_index(
-                mutation_key, drop=False, inplace=True
-            )
+            df_d.set_index(mutation_key, drop=False, inplace=True)
             logger.debug(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Successfully reset the index for standard data frame"
             )
@@ -185,9 +158,7 @@ def create_all_maf_dataframe(
     # Prep Original
     if df_o is not None:
         try:
-            df_o.set_index(
-                mutation_key, drop=False, inplace=True
-            )
+            df_o.set_index(mutation_key, drop=False, inplace=True)
             logger.debug(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Successfully reset the index for original data frame"
             )

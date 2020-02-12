@@ -283,7 +283,7 @@ def generate(
     logger.info("Elapsed time: %.1f [min]" % ((t1_stop - t1_start) / 60))
     logger.info("CPU process time: %.1f [min]" % ((t2_stop - t2_start) / 60))
     logger.info("--------------------------------------------------")
-    return (p1, p2, p3)
+    return (std_output_maf, simplex_output_maf, duplex_output_maf)
 
 
 def generate_gbcms_cmd(
@@ -367,12 +367,13 @@ def generate_gbcms_cmd(
 def merge(
     patient_id, input_maf, input_standard_maf, input_duplex_maf, input_simplex_maf
 ):
-    """ Given original input MAF used as an input for GBCMS along with 
+    """ 
+    Given original input MAF used as an input for GBCMS along with 
     GBCMS generated output MAF for standard_bam, duplex_bam or simplex bam, 
     Merge them into a single output MAF format. 
     If both duplex_bam and simplex_bam based MAF are provided
     the program will generate merged genotypes as well.
-    The output file will be based on the give alphanumeric patient identifier as suffix.
+    The output file will be based on the give alphanumeric patient identifier as prefix.
     """
     logger_output = pathlib.Path.cwd().joinpath("genotype_variants.log")
     fh = logging.FileHandler(logger_output)
@@ -432,11 +433,12 @@ def merge(
 
     # generate duplex simplex data frame
     ds_maf = None
-    file_name = None
+
     if d_maf is not None and s_maf is not None:
         ds_maf = cdsd(s_maf, d_maf)
 
     # generate data frame based on satisfying conditions
+    file_name = None
     (df_o_s_ds, df_s_ds, df_s_ds) = None, None, None
     if o_maf is not None and i_maf is not None and ds_maf is not None:
         df_o_s_ds = camd(o_maf, i_maf, ds_maf)
@@ -451,7 +453,7 @@ def merge(
         file_name = pathlib.Path.cwd().joinpath(
             patient_id + "-ORG-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
-        write_csv(file_name, df_s_ds)
+        write_csv(file_name, df_o_ds)
     elif i_maf is not None and ds_maf is not None:
         df_s_ds = camd(None, i_maf, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
@@ -482,7 +484,7 @@ def merge(
 
 def write_csv(file_name, data_frame):
     try:
-        data_frame.to_csv(file_name, sep="\t", index=False)
+        data_frame.to_csv(str(file_name), sep="\t", index=False)
         logger.info(
             "genotype_variants:small_variants:create_csv:: merged genotyped data has been written to %s",
             file_name,
@@ -494,3 +496,147 @@ def write_csv(file_name, data_frame):
             e,
         )
         exit(1)
+
+
+@cli.command()
+@click.option(
+    "-i",
+    "--input-maf",
+    required=True,
+    type=click.Path(exists=True),
+    help="Full path to small variants input file in MAF format",
+)
+@click.option(
+    "-r",
+    "--reference-fasta",
+    required=True,
+    type=click.Path(exists=True),
+    help="Full path to reference file in FASTA format",
+)
+@click.option(
+    "-p",
+    "--patient-id",
+    required=True,
+    type=click.STRING,
+    help="Alphanumeric string indicating patient identifier",
+)
+@click.option(
+    "-b",
+    "--standard-bam",
+    required=False,
+    type=click.Path(exists=True),
+    help="Full path to standard bam file, Note: This option assumes that the .bai file is present at same location as the bam file",
+)
+@click.option(
+    "-d",
+    "--duplex-bam",
+    required=False,
+    type=click.Path(exists=True),
+    help="Full path to duplex bam file, Note: This option assumes that the .bai file is present at same location as the bam file",
+)
+@click.option(
+    "-s",
+    "--simplex-bam",
+    required=False,
+    type=click.Path(exists=True),
+    help="Full path to simplex bam file, Note: This option assumes that the .bai file is present at same location as the bam file",
+)
+@click.option(
+    "-g",
+    "--gbcms-path",
+    required=True,
+    type=click.Path(exists=True),
+    help="Full path to GetBaseCountMultiSample executable with fragment support",
+)
+@click.option(
+    "-fd",
+    "--filter-duplicate",
+    required=False,
+    default=0,
+    type=click.INT,
+    help="Filter duplicate parameter for GetBaseCountMultiSample",
+)
+@click.option(
+    "-fc",
+    "--fragment-count",
+    required=False,
+    default=1,
+    type=click.INT,
+    help="Fragment Count parameter for GetBaseCountMultiSample",
+)
+@click.option(
+    "-mapq",
+    "--mapping-quality",
+    required=False,
+    default=20,
+    type=click.INT,
+    help="Mapping quality for GetBaseCountMultiSample",
+)
+@click.option(
+    "-t",
+    "--threads",
+    required=False,
+    default=1,
+    type=click.INT,
+    help="Number of threads to use for GetBaseCountMultiSample",
+)
+@click_log.simple_verbosity_option(logger)
+def all(
+    input_maf,
+    reference_fasta,
+    gbcms_path,
+    patient_id,
+    standard_bam,
+    duplex_bam,
+    simplex_bam,
+    filter_duplicate,
+    fragment_count,
+    mapping_quality,
+    threads,
+):
+    """
+    Command that helps to generate genotyped MAF and 
+    merge the genotyped MAF.
+    the output file will be labelled with 
+    patient identifier as prefix
+    """
+    logger_output = pathlib.Path.cwd().joinpath("genotype_variants.log")
+    fh = logging.FileHandler(logger_output)
+    formatter = logging.Formatter(
+        fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%m/%d/%Y %I:%M:%S %p",
+    )
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+    logger.info(
+        "========================================================================================"
+    )
+    logger.info(
+        ">>> Running genotype_variants for small variants to generate genotypes and merge MAF <<<"
+    )
+    logger.info(
+        "========================================================================================="
+    )
+    t1_start = time.perf_counter()
+    t2_start = time.process_time()
+    (standard_maf, simplex_maf, duplex_maf) = generate(
+        input_maf,
+        reference_fasta,
+        gbcms_path,
+        patient_id,
+        standard_bam,
+        duplex_bam,
+        simplex_bam,
+        filter_duplicate,
+        fragment_count,
+        mapping_quality,
+        threads,
+    )
+    final_file = merge(patient_id, input_maf, standard_maf, simplex_maf, duplex_maf)
+    t1_stop = time.perf_counter()
+    t2_stop = time.process_time()
+    logger.info("--------------------------------------------------")
+    logger.info("Elapsed time: %.1f [min]" % ((t1_stop - t1_start) / 60))
+    logger.info("CPU process time: %.1f [min]" % ((t2_stop - t2_start) / 60))
+    logger.info("--------------------------------------------------")
+    return
