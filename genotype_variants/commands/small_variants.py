@@ -448,6 +448,10 @@ def merge(
         pass
     elif o_maf is not None and ds_maf is not None:
         df_o_ds = camd(o_maf, None, ds_maf)
+        file_name = pathlib.Path.cwd().joinpath(
+            patient_id + "-ORG-SIMPLEX-DUPLEX" + "_genotyped.maf"
+        )
+        write_csv(file_name, df_s_ds)
     elif i_maf is not None and ds_maf is not None:
         df_s_ds = camd(None, i_maf, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
