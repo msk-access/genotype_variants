@@ -472,7 +472,7 @@ def merge(
     logger.info("Elapsed time: %.1f [min]" % ((t1_stop - t1_start) / 60))
     logger.info("CPU process time: %.1f [min]" % ((t2_stop - t2_start) / 60))
     logger.info("--------------------------------------------------")
-    return out_duplex_simplex_maf
+    return filename
 
 
 def write_csv(file_name, data_frame):
