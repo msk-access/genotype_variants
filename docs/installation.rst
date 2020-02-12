@@ -8,6 +8,14 @@ Installation
 Stable release
 --------------
 
+Requirements
+************
+
+* **Python 3**
+* **click** (https://palletsprojects.com/p/click/)
+* **click-log** (https://github.com/click-contrib/click-log)
+* **pandas** (https://pandas.pydata.org/)
+
 To install genotype_variants, run this command in your terminal:
 
 .. code-block:: console
