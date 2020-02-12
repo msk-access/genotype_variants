@@ -619,7 +619,7 @@ def all(
     )
     t1_start = time.perf_counter()
     t2_start = time.process_time()
-    (standard_maf, simplex_maf, duplex_maf) = generate(
+    (standard_maf, simplex_maf, duplex_maf) = generate.callback(
         input_maf,
         reference_fasta,
         gbcms_path,
@@ -632,7 +632,7 @@ def all(
         mapping_quality,
         threads,
     )
-    final_file = merge(patient_id, input_maf, standard_maf, simplex_maf, duplex_maf)
+    final_file = merge.callback(patient_id, input_maf, standard_maf, simplex_maf, duplex_maf)
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
     logger.info("--------------------------------------------------")
