@@ -35,9 +35,6 @@ def create_all_maf_dataframe(
     (df_ds, df_s, df_o) = None, None, None
     if simplex_duplex_dataframe is not None:
         df_ds = simplex_duplex_dataframe.copy()
-        df_ds.sort_values(
-            ["Chromosome", "Start_Position", "End_Position"], inplace=True
-        )
     if standard_dataframe is not None:
         df_s = standard_dataframe.copy()
         df_s.sort_values(["Chromosome", "Start_Position", "End_Position"], inplace=True)
