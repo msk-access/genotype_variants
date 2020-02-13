@@ -13,12 +13,10 @@ Which have the following sub-commands:
 * `all`_: This will run both of the sub-commands above `generate` and `merge` togather.
 
 generate
-********
+--------
 
 To use `small_variants generate` via command line here are the options::
 
-    help: 
-    ------
 
     > genotype_variants small_variants generate --help
     Usage: genotype_variants small_variants generate [OPTIONS]
@@ -69,13 +67,21 @@ To use `small_variants generate` via command line here are the options::
     -d duplex_bam \
     -s simplex_bam 
 
+
+Expected Output
+"""""""""""""""
+
+In the current worrking directory if the above command is executed you will find the following files:
+
+    * patient_id-STANDARD_genotyped.maf 
+    * patient_id-DUPLEX_genotyped.maf 
+    * patient_id-SIMPLEX_genotyped.maf 
+
 merge
-******
+-----
 
 To use `small_variants merge` via command line here are the options::
 
-    help: 
-    ------
     > genotype_variants small_variants merge --help
     Usage: genotype_variants small_variants merge [OPTIONS]
 
@@ -116,13 +122,29 @@ To use `small_variants merge` via command line here are the options::
     -p patient_id \
 
 
+Expected Output
+"""""""""""""""
+
+In the current worrking directory if the above command is executed you will find the following files:
+
+    * patient_id-ORG-STD-SIMPLEX-DUPLEX_genotyped.maf 
+
+If only input_maf with duplex_bam_genotyped_maf and simplex_bam_genotyped_maf is given then the output file will be:
+
+    * patient_id-ORG-SIMPLEX-DUPLEX_genotyped.maf 
+
+If only standard_bam_genotyped_maf with duplex_bam_genotyped_maf and simplex_bam_genotyped_maf is given then the output file will be:
+
+    * patient_id-STD-SIMPLEX-DUPLEX_genotyped.maf 
+
+If only duplex_bam_genotyped_maf and simplex_bam_genotyped_maf is given then the output file will be:
+
+    * patient_id-SIMPLEX-DUPLEX_genotyped.maf 
+
 all
-****
+---
 
 To use `small_variants all` via command line here are the options::
-
-    help: 
-    ------
 
     > genotype_variants small_variants all --help
     Usage: genotype_variants small_variants all [OPTIONS]
@@ -172,6 +194,12 @@ To use `small_variants all` via command line here are the options::
     -b standard_bam \
     -d duplex_bam \
     -s simplex_bam 
+
+Expected Output
+"""""""""""""""
+
+    Please refer to the `generate` and `merge` usage for the expected output.
+
 
 To use genotype_variants in a project::
 

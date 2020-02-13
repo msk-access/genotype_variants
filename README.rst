@@ -36,7 +36,7 @@ Which have the following sub-commands:
 * **merge**: To merge MAF format files w.r.t counts generated from the `generate` command.
 * **all**: This will run both of the sub-commands above `generate` and `merge` togather.
 
-**Please read the USAGE section for more information**
+**Please read the `USAGE <https://genotype-variants.readthedocs.io/en/latest/usage.html>`_ section for more information**
 
 To Do
 -----
