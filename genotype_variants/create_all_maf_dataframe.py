@@ -108,15 +108,15 @@ def create_all_maf_dataframe(
 
         try:
             df_s["t_total_count_reverse_standard"] = (
-                df_s["t_total_count_standard"] - df_s["t_total_count_forward_standard"]
+                df_s["t_total_count_standard"] - df_ds["t_total_count_forward_standard"]
             )
             df_s["t_ref_count_reverse_standard"] = (
                 df_s["t_total_count_reverse_standard"]
-                - df_s["t_ref_count_forward_standard"]
+                - df_ds["t_ref_count_forward_standard"]
             )
             df_s["t_alt_count_reverse_standard"] = (
                 df_s["t_total_count_reverse_standard"]
-                - df_s["t_alt_count_forward_standard"]
+                - df_ds["t_alt_count_forward_standard"]
             )
             logger.debug(
                 "genotype:variants:small_variants::create_all_maf_dataframe:: Successfully generated reverse count columns in standard data frame"
@@ -130,7 +130,7 @@ def create_all_maf_dataframe(
             exit(1)
 
         try:
-            df_s["Tumor_Sample_Barcode"] = df_s["Tumor_Sample_Barcode"].str.replace(
+            df_d["Tumor_Sample_Barcode"] = df_d["Tumor_Sample_Barcode"].str.replace(
                 "-STANDARD", ""
             )
             logger.debug(
@@ -144,7 +144,7 @@ def create_all_maf_dataframe(
             )
 
         try:
-            df_s.set_index(mutation_key, drop=False, inplace=True)
+            df_d.set_index(mutation_key, drop=False, inplace=True)
             logger.debug(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Successfully reset the index for standard data frame"
             )
