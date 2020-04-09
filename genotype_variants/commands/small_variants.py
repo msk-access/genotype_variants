@@ -790,11 +790,7 @@ def multiple_patient(
             logger.error("genotype_variants::small_variants::multiple_patient:: duplex_bam and simplex_bam are not present for genotype variants! Please provide both of them to run genotype_variants.")
             exit(1)
         if pd.notnull(metadata['patient_id'][ind]):
-            if(metadata['patient_id'][ind]).is_string():
-                patient_id = metadata['patient_id'][ind]
-            else:
-                logger.error("genotype_variants:small_variants:multiple_patient:: Patient Id is not a string, please check input metadata file and try again.")
-                exit(1)
+            patient_id = metadata['patient_id'][ind]
         else:
             logger.error("genotype_variants:small_variants:multiple_patient:: Patient Id is not a string, please check input metadata file and try again.")
             exit(1)
