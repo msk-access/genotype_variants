@@ -156,7 +156,9 @@ def generate(
     """Command that helps to generate genotyped MAF,
     the output file will be labelled with
     patient identifier as prefix"""
-    logger_output = pathlib.Path.cwd().joinpath("genotype_variants.log")
+    pid = os.getpid()
+    logger_file = "genotype_variants_" + pid + ".log"
+    logger_output = pathlib.Path.cwd().joinpath(logger_file)
     fh = logging.FileHandler(logger_output)
     formatter = logging.Formatter(
         fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -375,7 +377,9 @@ def merge(
     the program will generate merged genotypes as well.
     The output file will be based on the give alphanumeric patient identifier as prefix.
     """
-    logger_output = pathlib.Path.cwd().joinpath("genotype_variants.log")
+    pid = os.getpid()
+    logger_file = "genotype_variants_" + pid + ".log"
+    logger_output = pathlib.Path.cwd().joinpath(logger_file)
     fh = logging.FileHandler(logger_output)
     formatter = logging.Formatter(
         fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -600,7 +604,9 @@ def all(
     the output file will be labelled with 
     patient identifier as prefix
     """
-    logger_output = pathlib.Path.cwd().joinpath("genotype_variants.log")
+    pid = os.getpid()
+    logger_file = "genotype_variants_" + pid + ".log"
+    logger_output = pathlib.Path.cwd().joinpath(logger_file)
     fh = logging.FileHandler(logger_output)
     formatter = logging.Formatter(
         fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -720,7 +726,9 @@ def multiple_patient(
     
     For maf, standard_bam, duplex_bam and simplex_bam please include full path to the file.
     """
-    logger_output = pathlib.Path.cwd().joinpath("genotype_variants.log")
+    pid = os.getpid()
+    logger_file = "genotype_variants_" + pid + ".log"
+    logger_output = pathlib.Path.cwd().joinpath(logger_file)
     fh = logging.FileHandler(logger_output)
     formatter = logging.Formatter(
         fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -744,14 +752,23 @@ def multiple_patient(
         metadata = pd.read_excel(input_metadata)
     except:
         e = sys.exc_info()[0]
-        logger.error(
+        logger.warning(
             "genotype_variants:small_variants:multiple_patient:: could not read to EXCEL file, due to error: %s",
             e,
         )
-        logger.error(
+        logger.warning(
             "genotype_variants:small_variants:multiple_patient:: Assuming its as TSV file"
         )
+        pass
+    try:
         metadata = pd.read_csv(input_metadata, sep="\t", header="infer")
+    except:
+        e = sys.exc_info()[0]
+        logger.error(
+            "genotype_variants:small_variants:multiple_patient:: could not read TSV file, due to error: %s. Please fix and rerun the script",
+            e,
+        )
+        exit(1)
     for ind in metadata.index:
         if pd.notnull(metadata['maf'][ind]):
             if pathlib.Path(metadata['maf'][ind]).is_file():
