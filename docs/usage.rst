@@ -11,6 +11,7 @@ Which have the following sub-commands:
 * `generate`_: To run GetBaseCountMultiSample on given BAM files
 * `merge`_: To merge MAF format files w.r.t counts generated from the `generate` command.
 * `all`_: This will run both of the sub-commands above `generate` and `merge` togather.
+* `multiple-patient`_: This will run sub-commands `all` for multiple patients in the provided metadata file
 
 generate
 --------
@@ -200,6 +201,59 @@ Expected Output
 
     Please refer to the `generate` and `merge` usage for the expected output.
 
+
+multiple-patient
+----------------
+
+To use `small_variants multiple-patient` via command line here are the options::
+
+    genotype_variants small_variants multiple-patient --help
+    Usage: genotype_variants small_variants multiple-patient [OPTIONS]
+
+    Command that helps to generate genotyped MAF and  merge the genotyped MAF
+    for multiple patients. the output file will be labelled with  patient
+    identifier as prefix
+
+    Expected header of metadata_file in any order: patient_id maf standard_bam
+    duplex_bam simplex_bam
+
+    For maf, standard_bam, duplex_bam and simplex_bam please include full path
+    to the file.
+
+    Options:
+    -i, --input-metadata PATH       Full path to metadata file in TSV/EXCEL
+                                    format, with following headers: patient_id,
+                                    maf, standard_bam, duplex_bam, simplex_bam.
+                                    Make sure to use full paths inside the
+                                    metadata file  [required]
+    -r, --reference-fasta PATH      Full path to reference file in FASTA format
+                                    [required]
+    -g, --gbcms-path PATH           Full path to GetBaseCountMultiSample
+                                    executable with fragment support  [required]
+    -fd, --filter-duplicate INTEGER
+                                    Filter duplicate parameter for
+                                    GetBaseCountMultiSample
+    -fc, --fragment-count INTEGER   Fragment Count parameter for
+                                    GetBaseCountMultiSample
+    -mapq, --mapping-quality INTEGER
+                                    Mapping quality for GetBaseCountMultiSample
+    -t, --threads INTEGER           Number of threads to use for
+                                    GetBaseCountMultiSample
+    -v, --verbosity LVL             Either CRITICAL, ERROR, WARNING, INFO or
+                                    DEBUG
+    --help                          Show this message and exit.
+
+.. code-block:: console 
+    
+    genotype_variants small_variants multiple-patient \
+    -i /path/to/input_metadata \
+    -r /path/to/reference_fasta \
+    -g /path/to/GetBaseCountsMultiSample
+
+Expected Output
+"""""""""""""""
+
+    Please refer to the `generate` and `merge` usage for the expected output.
 
 To use genotype_variants in a project::
 
