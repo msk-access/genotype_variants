@@ -639,4 +639,166 @@ def all(
     logger.info("Elapsed time: %.1f [min]" % ((t1_stop - t1_start) / 60))
     logger.info("CPU process time: %.1f [min]" % ((t2_stop - t2_start) / 60))
     logger.info("--------------------------------------------------")
+    return final_file
+
+@cli.command()
+@click.option(
+    "-i",
+    "--input-metadata",
+    required=True,
+    type=click.Path(exists=True),
+    help="Full path to metadata file in TSV/EXCEL format, with following headers: patient_id, maf, standard_bam, duplex_bam, simplex_bam. Make sure to use full paths inside the metadata file",
+)
+@click.option(
+    "-r",
+    "--reference-fasta",
+    required=True,
+    type=click.Path(exists=True),
+    help="Full path to reference file in FASTA format",
+)
+@click.option(
+    "-g",
+    "--gbcms-path",
+    required=True,
+    type=click.Path(exists=True),
+    help="Full path to GetBaseCountMultiSample executable with fragment support",
+)
+@click.option(
+    "-fd",
+    "--filter-duplicate",
+    required=False,
+    default=0,
+    type=click.INT,
+    help="Filter duplicate parameter for GetBaseCountMultiSample",
+)
+@click.option(
+    "-fc",
+    "--fragment-count",
+    required=False,
+    default=1,
+    type=click.INT,
+    help="Fragment Count parameter for GetBaseCountMultiSample",
+)
+@click.option(
+    "-mapq",
+    "--mapping-quality",
+    required=False,
+    default=20,
+    type=click.INT,
+    help="Mapping quality for GetBaseCountMultiSample",
+)
+@click.option(
+    "-t",
+    "--threads",
+    required=False,
+    default=1,
+    type=click.INT,
+    help="Number of threads to use for GetBaseCountMultiSample",
+)
+@click_log.simple_verbosity_option(logger)
+def multiple_patient(
+    input_metadata,
+    reference_fasta,
+    gbcms_path,
+    filter_duplicate,
+    fragment_count,
+    mapping_quality,
+    threads,
+):
+    """
+    Command that helps to generate genotyped MAF and 
+    merge the genotyped MAF for multiple patients.
+    the output file will be labelled with 
+    patient identifier as prefix
+
+    Expected header of metadata_file in any order:
+    patient_id
+    maf
+    standard_bam
+    duplex_bam
+    simplex_bam
+    
+    For maf, standard_bam, duplex_bam and simplex_bam please include full path to the file.
+    """
+    logger_output = pathlib.Path.cwd().joinpath("genotype_variants.log")
+    fh = logging.FileHandler(logger_output)
+    formatter = logging.Formatter(
+        fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%m/%d/%Y %I:%M:%S %p",
+    )
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+    logger.info(
+        "========================================================================================"
+    )
+    logger.info(
+        ">>> Running genotype_variants for small variants to generate genotypes and merge MAF <<<"
+    )
+    logger.info(
+        "========================================================================================="
+    )
+    t1_start = time.perf_counter()
+    t2_start = time.process_time()
+    metadata = pd.DataFrame()
+    try:
+        metadata = pd.read_excel(input_metadata)
+    except:
+        e = sys.exc_info()[0]
+        logger.error(
+            "genotype_variants:small_variants:multiple_patient:: could not read to EXCEL file, due to error: %s",
+            e,
+        )
+        logger.error(
+            "genotype_variants:small_variants:multiple_patient:: Assuming its as TSV file"
+        )
+        metadata = pd.read_csv(input_metadata, sep="\t", header="infer")
+    for ind in metadata.index:
+        if pathlib.Path(metadata['maf'][ind]).is_file():
+            input_maf = metadata['maf'][ind]
+        else:
+            logger.error("genotype_variants::small_variants::multiple_patient:: Maf file to genotype variants is not present and is required.")
+            exit(1)
+        if pathlib.Path(metadata['standard_bam'][ind]).is_file():
+            standard_bam = metadata['standard_bam'][ind]
+        else:
+            standard_bam = None
+            logger.info("genotype_variants::small_variants::multiple_patient:: Standard BAM file to genotype variants is not present.")
+        if pathlib.Path(metadata['duplex_bam'][ind]).is_file():
+            duplex_bam = metadata['duplex_bam'][ind]
+        else:
+            duplex_bam = None
+        if pathlib.Path(metadata['simplex_bam'][ind]).is_file():
+            simplex_bam = metadata['simplex_bam'][ind]
+        else:
+            simplex_bam = None
+        if duplex_bam and simplex_bam:
+            logger.info("genotype_variants::small_variants::multiple_patient:: duplex_bam and simplex_bam are present for genotype variants.")
+        else:
+            logger.error("genotype_variants::small_variants::multiple_patient:: duplex_bam and simplex_bam are not present for genotype variants! Please provide both of them to run genotype_variants.")
+            exit(1)
+        if (metadata['patient_id'][ind]).is_string():
+            patient_id = metadata['patient_id'][ind]
+        else:
+            logger.error("genotype_variants:small_variants:multiple_patient:: Patient Id is not a string, please check input metadata file and try again.")
+            exit(1)
+        logger.info("genotype_variants:small_variants::multiple_patient:: %s is being processed", patient_id)
+        final_file = all.callback(
+            input_maf,
+            reference_fasta,
+            gbcms_path,
+            patient_id,
+            standard_bam,
+            duplex_bam,
+            simplex_bam,
+            filter_duplicate,
+            fragment_count,
+            mapping_quality,
+            threads,
+        )
+    t1_stop = time.perf_counter()
+    t2_stop = time.process_time()
+    logger.info("--------------------------------------------------")
+    logger.info("Elapsed time: %.1f [min]" % ((t1_stop - t1_start) / 60))
+    logger.info("CPU process time: %.1f [min]" % ((t2_stop - t2_start) / 60))
+    logger.info("--------------------------------------------------")
     return
