@@ -54,6 +54,7 @@ def create_all_maf_dataframe(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Could not rename samples in Tumor_Sample_Barcode for simplex duplex data frame, due to error, %s",
                 e,
             )
+            exit(1)
 
         try:
             df_ds.set_index(mutation_key, drop=False, inplace=True)
@@ -66,6 +67,7 @@ def create_all_maf_dataframe(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Could not reset the index for simplex duplex data frame, due to error, %s",
                 e,
             )
+            exit(1)
 
     # Prep Standard
     if df_s is not None:
@@ -142,6 +144,7 @@ def create_all_maf_dataframe(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Could not rename samples in Tumor_Sample_Barcode for standard data frame, due to error, %s",
                 e,
             )
+            exit(1)
 
         try:
             df_s.set_index(mutation_key, drop=False, inplace=True)
@@ -154,6 +157,7 @@ def create_all_maf_dataframe(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Could not reset the index for standard data frame, due to error, %s",
                 e,
             )
+            exit(1)
 
     # Prep Original
     if df_o is not None:
@@ -168,6 +172,7 @@ def create_all_maf_dataframe(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Could not reset the index for original data frame, due to error, %s",
                 e,
             )
+            exit(1)
 
     # Merge STANDARD with DUPLEX-SIMPLEX data frame
     df_s_ds = None
@@ -215,6 +220,7 @@ def create_all_maf_dataframe(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Could not reset the index for merged data frame, due to error, %s",
                 e,
             )
+            exit(1)
 
     # Merge Original with STANDARD-DUPLEX-SIMPLEX data frame
     df_o_s_ds = None
@@ -263,6 +269,7 @@ def create_all_maf_dataframe(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Could not reset the index for merged data frame, due to error, %s",
                 e,
             )
+            exit(1)
 
     df_o_ds = None
     if df_ds is not None and df_o is not None:
@@ -310,6 +317,7 @@ def create_all_maf_dataframe(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Could not reset the index for merged data frame, due to error, %s",
                 e,
             )
+            exit(1)
 
     logger.info("Successfully merged data frame")
 
