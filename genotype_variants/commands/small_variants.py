@@ -757,8 +757,8 @@ def multiple_patient(
             if pathlib.Path(metadata['maf'][ind]).is_file():
                 input_maf = metadata['maf'][ind]
             else:
-            logger.error("genotype_variants::small_variants::multiple_patient:: Maf file to genotype variants is present but the path is invalid. Please provide a valid path")
-            exit(1)
+                logger.error("genotype_variants::small_variants::multiple_patient:: Maf file to genotype variants is present but the path is invalid. Please provide a valid path")
+                exit(1)
         else:
             logger.error("genotype_variants::small_variants::multiple_patient:: Maf file to genotype variants is not present and is required.")
             exit(1)
