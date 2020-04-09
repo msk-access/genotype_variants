@@ -753,22 +753,35 @@ def multiple_patient(
         )
         metadata = pd.read_csv(input_metadata, sep="\t", header="infer")
     for ind in metadata.index:
-        if pathlib.Path(metadata['maf'][ind]).is_file():
-            input_maf = metadata['maf'][ind]
+        if metadata['maf'][ind]:
+            if pathlib.Path(metadata['maf'][ind]).is_file():
+                input_maf = metadata['maf'][ind]
+            else:
+            logger.error("genotype_variants::small_variants::multiple_patient:: Maf file to genotype variants is present but the path is invalid. Please provide a valid path")
+            exit(1)
         else:
             logger.error("genotype_variants::small_variants::multiple_patient:: Maf file to genotype variants is not present and is required.")
             exit(1)
-        if pathlib.Path(metadata['standard_bam'][ind]).is_file():
-            standard_bam = metadata['standard_bam'][ind]
+        if metadata['standard_bam'][ind]: 
+            if pathlib.Path(metadata['standard_bam'][ind]).is_file():
+                standard_bam = metadata['standard_bam'][ind]
+            else:
+                standard_bam = None
         else:
             standard_bam = None
             logger.info("genotype_variants::small_variants::multiple_patient:: Standard BAM file to genotype variants is not present.")
-        if pathlib.Path(metadata['duplex_bam'][ind]).is_file():
-            duplex_bam = metadata['duplex_bam'][ind]
+        if metadata['duplex_bam'][ind]:
+            if pathlib.Path(metadata['duplex_bam'][ind]).is_file():
+                duplex_bam = metadata['duplex_bam'][ind]
+            else:
+                duplex_bam = None
         else:
             duplex_bam = None
-        if pathlib.Path(metadata['simplex_bam'][ind]).is_file():
-            simplex_bam = metadata['simplex_bam'][ind]
+        if metadata['simplex_bam'][ind]:
+            if pathlib.Path(metadata['simplex_bam'][ind]).is_file():
+                simplex_bam = metadata['simplex_bam'][ind]
+            else:
+                simplex_bam = None
         else:
             simplex_bam = None
         if duplex_bam and simplex_bam:
@@ -776,8 +789,12 @@ def multiple_patient(
         else:
             logger.error("genotype_variants::small_variants::multiple_patient:: duplex_bam and simplex_bam are not present for genotype variants! Please provide both of them to run genotype_variants.")
             exit(1)
-        if (metadata['patient_id'][ind]).is_string():
-            patient_id = metadata['patient_id'][ind]
+        if metadata['patient_id'][ind]:
+            if(metadata['patient_id'][ind]).is_string():
+                patient_id = metadata['patient_id'][ind]
+            else:
+                logger.error("genotype_variants:small_variants:multiple_patient:: Patient Id is not a string, please check input metadata file and try again.")
+                exit(1)
         else:
             logger.error("genotype_variants:small_variants:multiple_patient:: Patient Id is not a string, please check input metadata file and try again.")
             exit(1)
