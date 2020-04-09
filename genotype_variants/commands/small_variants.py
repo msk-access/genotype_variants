@@ -157,7 +157,7 @@ def generate(
     the output file will be labelled with
     patient identifier as prefix"""
     pid = os.getpid()
-    logger_file = "genotype_variants_" + pid + ".log"
+    logger_file = "genotype_variants_" + str(pid) + ".log"
     logger_output = pathlib.Path.cwd().joinpath(logger_file)
     fh = logging.FileHandler(logger_output)
     formatter = logging.Formatter(
@@ -378,7 +378,7 @@ def merge(
     The output file will be based on the give alphanumeric patient identifier as prefix.
     """
     pid = os.getpid()
-    logger_file = "genotype_variants_" + pid + ".log"
+    logger_file = "genotype_variants_" + str(pid) + ".log"
     logger_output = pathlib.Path.cwd().joinpath(logger_file)
     fh = logging.FileHandler(logger_output)
     formatter = logging.Formatter(
@@ -605,7 +605,7 @@ def all(
     patient identifier as prefix
     """
     pid = os.getpid()
-    logger_file = "genotype_variants_" + pid + ".log"
+    logger_file = "genotype_variants_" + str(pid) + ".log"
     logger_output = pathlib.Path.cwd().joinpath(logger_file)
     fh = logging.FileHandler(logger_output)
     formatter = logging.Formatter(
@@ -727,7 +727,7 @@ def multiple_patient(
     For maf, standard_bam, duplex_bam and simplex_bam please include full path to the file.
     """
     pid = os.getpid()
-    logger_file = "genotype_variants_" + pid + ".log"
+    logger_file = "genotype_variants_" + str(pid) + ".log"
     logger_output = pathlib.Path.cwd().joinpath(logger_file)
     fh = logging.FileHandler(logger_output)
     formatter = logging.Formatter(
