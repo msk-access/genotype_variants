@@ -440,6 +440,10 @@ def merge(
 
     if d_maf is not None and s_maf is not None:
         ds_maf = cdsd(s_maf, d_maf)
+        file_name = pathlib.Path.cwd().joinpath(
+            patient_id + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
+        )
+        write_csv(file_name, ds_maf)
 
     # generate data frame based on satisfying conditions
     file_name = None
