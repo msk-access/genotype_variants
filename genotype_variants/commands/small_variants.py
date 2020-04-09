@@ -777,7 +777,7 @@ def multiple_patient(
                 duplex_bam = None
         else:
             duplex_bam = None
-        if pd..notnull(metadata['simplex_bam'][ind]):
+        if pd.notnull(metadata['simplex_bam'][ind]):
             if pathlib.Path(metadata['simplex_bam'][ind]).is_file():
                 simplex_bam = metadata['simplex_bam'][ind]
             else:
