@@ -35,7 +35,7 @@ Which have the following sub-commands:
 * **generate**: To run GetBaseCountMultiSample on given BAM files
 * **merge**: To merge MAF format files w.r.t counts generated from the `generate` command.
 * **all**: This will run both of the sub-commands above `generate` and `merge` togather.
-* **multiple-patient**: This will run sub-commands `all` for multiple patients in the provided metadata file
+* **multiple-samples**: This will run sub-commands `all` for multiple samples in the provided metadata file
 
 **Please read the USAGE** (https://genotype-variants.readthedocs.io/en/latest/usage.html) **section of the documentation for more information**
 

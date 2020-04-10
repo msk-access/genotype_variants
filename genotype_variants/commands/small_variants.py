@@ -674,7 +674,7 @@ def all(
     "--input-metadata",
     required=True,
     type=click.Path(exists=True),
-    help="Full path to metadata file in TSV/EXCEL format, with following headers: patient_id, maf, standard_bam, duplex_bam, simplex_bam. Make sure to use full paths inside the metadata file",
+    help="Full path to metadata file in TSV/EXCEL format, with following headers: sample_id, maf, standard_bam, duplex_bam, simplex_bam. Make sure to use full paths inside the metadata file",
 )
 @click.option(
     "-r",

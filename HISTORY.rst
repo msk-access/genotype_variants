@@ -2,6 +2,11 @@
 History
 =======
 
+0.3.0 (2020-04-10)
+------------------
+
+* Release with merge for standard BAM maf and Input MAF. Converted multiple-patient to multiple-sample
+
 0.2.1 (2020-04-09)
 ------------------
 
