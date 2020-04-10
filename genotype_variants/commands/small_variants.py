@@ -828,6 +828,7 @@ def multiple_samples(
                 simplex_bam = None
         else:
             simplex_bam = None
+
 '''            
         if standard_bam or duplex_bam or simplex_bam):
             logger.info(
@@ -839,6 +840,7 @@ def multiple_samples(
             )
             exit(1)
 '''
+
         if pd.notnull(metadata["sample_id"][ind]):
             sample_id = metadata["sample_id"][ind]
         else:
