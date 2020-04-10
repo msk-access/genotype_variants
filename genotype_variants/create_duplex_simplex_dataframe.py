@@ -223,8 +223,9 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         )
 
     # Merge
+    df_ds = None
     try:
-        df_d.reindex(df_s.index)
+        df_d = df_d.reindex(df_s.index)
         df_ds = df_s.merge(
             df_d[
                 [
@@ -318,6 +319,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
             "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not rename samples in Tumor_Sample_Barcode for merged data frame, due to error, %s",
             e,
         )
+        exit(1)
 
     try:
         df_ds.set_index(mutation_key, drop=False, inplace=True)
@@ -330,6 +332,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
             "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not reset the index for merged data frame, due to error, %s",
             e,
         )
+        exit(1)
 
     logger.info(
         "Successfully merged data frame and the counts for simplex and duplex MAF"
