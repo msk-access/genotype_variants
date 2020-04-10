@@ -223,6 +223,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         )
 
     # Merge
+    df_ds = None
     try:
         df_d = df_d.reindex(df_s.index)
         df_ds = df_s.merge(
