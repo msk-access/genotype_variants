@@ -769,7 +769,7 @@ def multiple_samples(
     )
     t1_start = time.perf_counter()
     t2_start = time.process_time()
-    metadata = pd.DataFrame()
+    metadata = None
     try:
         metadata = pd.read_excel(input_metadata)
     except:
@@ -782,15 +782,18 @@ def multiple_samples(
             "genotype_variants:small_variants:multiple_samples:: Assuming its as TSV file"
         )
         pass
-    try:
-        metadata = pd.read_csv(input_metadata, sep="\t", header="infer")
-    except:
-        e = sys.exc_info()[0]
-        logger.error(
-            "genotype_variants:small_variants:multiple_samples:: could not read TSV file, due to error: %s. Please fix and rerun the script",
-            e,
-        )
-        exit(1)
+    if metadata is None:
+        try:
+            metadata = pd.read_csv(input_metadata, sep="\t", header="infer")
+        except:
+            e = sys.exc_info()[0]
+            logger.error(
+                "genotype_variants:small_variants:multiple_samples:: could not read TSV file, due to error: %s. Please fix and rerun the script",
+                e,
+            )
+            exit(1)
+    else:
+        pass
     for ind in metadata.index:
         if pd.notnull(metadata["maf"][ind]):
             if pathlib.Path(metadata["maf"][ind]).is_file():

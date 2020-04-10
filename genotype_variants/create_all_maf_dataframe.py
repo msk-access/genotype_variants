@@ -289,12 +289,12 @@ def create_all_maf_dataframe(
             df_o_s = df_o.merge(
                 df_s[
                     [
-                        "t_alt_count_standard",
                         "t_ref_count_standard",
+                        "t_alt_count_standard",
                         "t_total_count_standard",
                         "t_variant_frequency_standard",
-                        "t_alt_count_forward_standard",
                         "t_ref_count_forward_standard",
+                        "t_alt_count_forward_standard",
                         "t_total_count_forward_standard",
                         "t_ref_count_reverse_standard",
                         "t_alt_count_reverse_standard",
