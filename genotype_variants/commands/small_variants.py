@@ -447,7 +447,7 @@ def merge(
 
     # generate data frame based on satisfying conditions
     file_name = None
-    (df_o_s_ds, df_s_ds, df_s_ds) = None, None, None
+    (df_o_s_ds, df_o_s, df_s_ds, df_s_ds) = None, None, None
     if o_maf is not None and i_maf is not None and ds_maf is not None:
         df_o_s_ds = camd(o_maf, i_maf, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
@@ -455,7 +455,10 @@ def merge(
         )
         write_csv(file_name, df_o_s_ds)
     elif o_maf is not None and i_maf is not None:
-        pass
+        df_o_s = camd(o_maf, i_maf, None)
+        file_name = pathlib.Path.cwd().joinpath(
+            patient_id + "-ORG-STD" + "_genotyped.maf"
+        )
     elif o_maf is not None and ds_maf is not None:
         df_o_ds = camd(o_maf, None, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
