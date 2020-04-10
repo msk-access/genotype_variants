@@ -56,7 +56,7 @@ def cli():
     """Sub-commands for genotyping small variants"""
     pass
 
-
+# Generate
 @cli.command()
 @click.option(
     "-i",
@@ -300,6 +300,9 @@ def generate_gbcms_cmd(
     mapping_quality,
     threads,
 ):
+
+    """This will help generate command for GetBaseCountMultiSample"""
+
     sample_id = patient_id + "-" + btype
     output_maf = pathlib.Path.cwd().joinpath(sample_id + "_genotyped.maf")
 
@@ -328,7 +331,7 @@ def generate_gbcms_cmd(
 
     return (cmd, output_maf)
 
-
+# Merge
 @cli.command()
 @click.option(
     "-i",
@@ -508,7 +511,7 @@ def write_csv(file_name, data_frame):
         )
         exit(1)
 
-
+# All
 @cli.command()
 @click.option(
     "-i",
@@ -654,6 +657,7 @@ def all(
     logger.info("--------------------------------------------------")
     return final_file
 
+# Multiple Sample Process
 @cli.command()
 @click.option(
     "-i",
@@ -709,7 +713,7 @@ def all(
     help="Number of threads to use for GetBaseCountMultiSample",
 )
 @click_log.simple_verbosity_option(logger)
-def multiple_patient(
+def multiple_samples(
     input_metadata,
     reference_fasta,
     gbcms_path,
@@ -720,12 +724,12 @@ def multiple_patient(
 ):
     """
     Command that helps to generate genotyped MAF and 
-    merge the genotyped MAF for multiple patients.
+    merge the genotyped MAF for multiple samples.
     the output file will be labelled with 
     patient identifier as prefix
 
     Expected header of metadata_file in any order:
-    patient_id
+    sample_id
     maf
     standard_bam
     duplex_bam
@@ -760,11 +764,11 @@ def multiple_patient(
     except:
         e = sys.exc_info()[0]
         logger.warning(
-            "genotype_variants:small_variants:multiple_patient:: could not read to EXCEL file, due to error: %s",
+            "genotype_variants:small_variants:multiple_samples:: could not read to EXCEL file, due to error: %s",
             e,
         )
         logger.warning(
-            "genotype_variants:small_variants:multiple_patient:: Assuming its as TSV file"
+            "genotype_variants:small_variants:multiple_samples:: Assuming its as TSV file"
         )
         pass
     try:
@@ -772,7 +776,7 @@ def multiple_patient(
     except:
         e = sys.exc_info()[0]
         logger.error(
-            "genotype_variants:small_variants:multiple_patient:: could not read TSV file, due to error: %s. Please fix and rerun the script",
+            "genotype_variants:small_variants:multiple_samples:: could not read TSV file, due to error: %s. Please fix and rerun the script",
             e,
         )
         exit(1)
@@ -781,10 +785,10 @@ def multiple_patient(
             if pathlib.Path(metadata['maf'][ind]).is_file():
                 input_maf = metadata['maf'][ind]
             else:
-                logger.error("genotype_variants::small_variants::multiple_patient:: Maf file to genotype variants is present but the path is invalid. Please provide a valid path")
+                logger.error("genotype_variants::small_variants::multiple_samples:: Maf file to genotype variants is present but the path is invalid. Please provide a valid path")
                 exit(1)
         else:
-            logger.error("genotype_variants::small_variants::multiple_patient:: Maf file to genotype variants is not present and is required.")
+            logger.error("genotype_variants::small_variants::multiple_samples:: Maf file to genotype variants is not present and is required.")
             exit(1)
         if pd.notnull(metadata['standard_bam'][ind]): 
             if pathlib.Path(metadata['standard_bam'][ind]).is_file():
@@ -793,7 +797,7 @@ def multiple_patient(
                 standard_bam = None
         else:
             standard_bam = None
-            logger.info("genotype_variants::small_variants::multiple_patient:: Standard BAM file to genotype variants is not present.")
+            logger.info("genotype_variants::small_variants::multiple_samples:: Standard BAM file to genotype variants is not present.")
         if pd.notnull(metadata['duplex_bam'][ind]):
             if pathlib.Path(metadata['duplex_bam'][ind]).is_file():
                 duplex_bam = metadata['duplex_bam'][ind]
@@ -809,21 +813,21 @@ def multiple_patient(
         else:
             simplex_bam = None
         if duplex_bam and simplex_bam:
-            logger.info("genotype_variants::small_variants::multiple_patient:: duplex_bam and simplex_bam are present for genotype variants.")
+            logger.info("genotype_variants::small_variants::multiple_samples:: duplex_bam and simplex_bam are present for genotype variants.")
         else:
-            logger.error("genotype_variants::small_variants::multiple_patient:: duplex_bam and simplex_bam are not present for genotype variants! Please provide both of them to run genotype_variants.")
+            logger.error("genotype_variants::small_variants::multiple_samples:: duplex_bam and simplex_bam are not present for genotype variants! Please provide both of them to run genotype_variants.")
             exit(1)
-        if pd.notnull(metadata['patient_id'][ind]):
-            patient_id = metadata['patient_id'][ind]
+        if pd.notnull(metadata['sample_id'][ind]):
+            sample_id = metadata['sample_id'][ind]
         else:
-            logger.error("genotype_variants:small_variants:multiple_patient:: Patient Id is not a string, please check input metadata file and try again.")
+            logger.error("genotype_variants:small_variants:multiple_samples:: Sample id is not a string, please check input metadata file and try again.")
             exit(1)
-        logger.info("genotype_variants:small_variants::multiple_patient:: %s is being processed", patient_id)
+        logger.info("genotype_variants:small_variants::multiple_samples:: %s is being processed", sample_id)
         final_file = all.callback(
             input_maf,
             reference_fasta,
             gbcms_path,
-            patient_id,
+            sample_id,
             standard_bam,
             duplex_bam,
             simplex_bam,
