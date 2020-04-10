@@ -11,7 +11,7 @@ Which have the following sub-commands:
 * `generate`_: To run GetBaseCountMultiSample on given BAM files
 * `merge`_: To merge MAF format files w.r.t counts generated from the `generate` command.
 * `all`_: This will run both of the sub-commands above `generate` and `merge` togather.
-* `multiple-patient`_: This will run sub-commands `all` for multiple patients in the provided metadata file
+* `multiple-samples`_: This will run sub-commands `all` for multiple patients in the provided metadata file
 
 generate
 --------
@@ -202,19 +202,19 @@ Expected Output
     Please refer to the `generate` and `merge` usage for the expected output.
 
 
-multiple-patient
+multiple-samples
 ----------------
 
-To use `small_variants multiple-patient` via command line here are the options::
+To use `small_variants multiple-samples` via command line here are the options::
 
-    genotype_variants small_variants multiple-patient --help
-    Usage: genotype_variants small_variants multiple-patient [OPTIONS]
+    genotype_variants small_variants multiple-samples --help
+    Usage: genotype_variants small_variants multiple-samples [OPTIONS]
 
     Command that helps to generate genotyped MAF and  merge the genotyped MAF
-    for multiple patients. the output file will be labelled with  patient
+    for multiple patients. the output file will be labelled with sample
     identifier as prefix
 
-    Expected header of metadata_file in any order: patient_id maf standard_bam
+    Expected header of metadata_file in any order: sample_id maf standard_bam
     duplex_bam simplex_bam
 
     For maf, standard_bam, duplex_bam and simplex_bam please include full path
@@ -222,7 +222,7 @@ To use `small_variants multiple-patient` via command line here are the options::
 
     Options:
     -i, --input-metadata PATH       Full path to metadata file in TSV/EXCEL
-                                    format, with following headers: patient_id,
+                                    format, with following headers: sample_id,
                                     maf, standard_bam, duplex_bam, simplex_bam.
                                     Make sure to use full paths inside the
                                     metadata file  [required]
@@ -245,7 +245,7 @@ To use `small_variants multiple-patient` via command line here are the options::
 
 .. code-block:: console 
     
-    genotype_variants small_variants multiple-patient \
+    genotype_variants small_variants multiple-samples \
     -i /path/to/input_metadata \
     -r /path/to/reference_fasta \
     -g /path/to/GetBaseCountsMultiSample
