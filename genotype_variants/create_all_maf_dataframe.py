@@ -281,7 +281,7 @@ def create_all_maf_dataframe(
             )
             exit(1)
 
-# Merge Original MAF data frame with STANDARD MAF data frame
+    # Merge Original MAF data frame with STANDARD MAF data frame
     df_o_s = None
     if df_o is not None and df_s is not None:
         try:
@@ -328,7 +328,7 @@ def create_all_maf_dataframe(
             )
             exit(1)
 
-# Merge original maf data frame with duplex and simplex and duplex data frame
+    # Merge original maf data frame with duplex and simplex and duplex data frame
     df_o_ds = None
     if df_ds is not None and df_o is not None:
         try:
