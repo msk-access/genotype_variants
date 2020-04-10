@@ -226,7 +226,7 @@ def create_all_maf_dataframe(
     df_o_s_ds = None
     if df_s_ds is not None:
         try:
-            df_ds = df_ds.reindex(df_o.index)
+            df_s_ds = df_s_ds.reindex(df_o.index)
             df_o_s_ds = df_o.merge(
                 df_s_ds[
                     [

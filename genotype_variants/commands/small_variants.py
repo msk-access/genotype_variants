@@ -415,21 +415,21 @@ def merge(
         logger.info(
             "genotype_variants:small_variants:merge:: Original MAF -> %s", input_maf
         )
-        o_maf = pd.read_csv(input_maf, sep="\t", header="infer")
+        o_maf = pd.read_csv(input_maf, sep="\t", header="infer", index_col=False)
     if input_standard_maf:
         logger.info(
             "genotype_variants:small_variants:merge:: STANDARD BAM MAF -> %s",
             input_standard_maf,
         )
-        i_maf = pd.read_csv(input_standard_maf, sep="\t", header="infer")
+        i_maf = pd.read_csv(input_standard_maf, sep="\t", header="infer", index_col=False)
     if input_duplex_maf:
-        d_maf = pd.read_csv(input_duplex_maf, sep="\t", header="infer")
+        d_maf = pd.read_csv(input_duplex_maf, sep="\t", header="infer", index_col=False)
         logger.info(
             "genotype_variants:small_variants:merge:: DUPLEX BAM MAF -> %s",
             input_duplex_maf,
         )
     if input_simplex_maf:
-        s_maf = pd.read_csv(input_simplex_maf, sep="\t", header="infer")
+        s_maf = pd.read_csv(input_simplex_maf, sep="\t", header="infer", index_col=False)
         logger.info(
             "genotype_variants:small_variants:merge:: SIMPLEX BAM MAF -> %s",
             input_simplex_maf,
