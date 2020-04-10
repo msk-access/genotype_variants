@@ -468,6 +468,7 @@ def merge(
         file_name = pathlib.Path.cwd().joinpath(
             patient_id + "-ORG-STD" + "_genotyped.maf"
         )
+        write_csv(file_name, df_o_s)
     elif o_maf is not None and ds_maf is not None:
         df_o_ds = camd(o_maf, None, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
