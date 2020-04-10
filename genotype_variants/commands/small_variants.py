@@ -56,6 +56,7 @@ def cli():
     """Sub-commands for genotyping small variants"""
     pass
 
+
 # Generate
 @cli.command()
 @click.option(
@@ -151,7 +152,7 @@ def generate(
     filter_duplicate,
     fragment_count,
     mapping_quality,
-    threads
+    threads,
 ):
     """Command that helps to generate genotyped MAF,
     the output file will be labelled with
@@ -331,6 +332,7 @@ def generate_gbcms_cmd(
 
     return (cmd, output_maf)
 
+
 # Merge
 @cli.command()
 @click.option(
@@ -424,7 +426,9 @@ def merge(
             "genotype_variants:small_variants:merge:: STANDARD BAM MAF -> %s",
             input_standard_maf,
         )
-        i_maf = pd.read_csv(input_standard_maf, sep="\t", header="infer", index_col=False)
+        i_maf = pd.read_csv(
+            input_standard_maf, sep="\t", header="infer", index_col=False
+        )
     if input_duplex_maf:
         d_maf = pd.read_csv(input_duplex_maf, sep="\t", header="infer", index_col=False)
         logger.info(
@@ -432,7 +436,9 @@ def merge(
             input_duplex_maf,
         )
     if input_simplex_maf:
-        s_maf = pd.read_csv(input_simplex_maf, sep="\t", header="infer", index_col=False)
+        s_maf = pd.read_csv(
+            input_simplex_maf, sep="\t", header="infer", index_col=False
+        )
         logger.info(
             "genotype_variants:small_variants:merge:: SIMPLEX BAM MAF -> %s",
             input_simplex_maf,
@@ -510,6 +516,7 @@ def write_csv(file_name, data_frame):
             e,
         )
         exit(1)
+
 
 # All
 @cli.command()
@@ -648,7 +655,9 @@ def all(
         mapping_quality,
         threads,
     )
-    final_file = merge.callback(patient_id, input_maf, standard_maf, duplex_maf, simplex_maf)
+    final_file = merge.callback(
+        patient_id, input_maf, standard_maf, duplex_maf, simplex_maf
+    )
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
     logger.info("--------------------------------------------------")
@@ -656,6 +665,7 @@ def all(
     logger.info("CPU process time: %.1f [min]" % ((t2_stop - t2_start) / 60))
     logger.info("--------------------------------------------------")
     return final_file
+
 
 # Multiple Sample Process
 @cli.command()
@@ -781,48 +791,63 @@ def multiple_samples(
         )
         exit(1)
     for ind in metadata.index:
-        if pd.notnull(metadata['maf'][ind]):
-            if pathlib.Path(metadata['maf'][ind]).is_file():
-                input_maf = metadata['maf'][ind]
+        if pd.notnull(metadata["maf"][ind]):
+            if pathlib.Path(metadata["maf"][ind]).is_file():
+                input_maf = metadata["maf"][ind]
             else:
-                logger.error("genotype_variants::small_variants::multiple_samples:: Maf file to genotype variants is present but the path is invalid. Please provide a valid path")
+                logger.error(
+                    "genotype_variants::small_variants::multiple_samples:: Maf file to genotype variants is present but the path is invalid. Please provide a valid path"
+                )
                 exit(1)
         else:
-            logger.error("genotype_variants::small_variants::multiple_samples:: Maf file to genotype variants is not present and is required.")
+            logger.error(
+                "genotype_variants::small_variants::multiple_samples:: Maf file to genotype variants is not present and is required."
+            )
             exit(1)
-        if pd.notnull(metadata['standard_bam'][ind]): 
-            if pathlib.Path(metadata['standard_bam'][ind]).is_file():
-                standard_bam = metadata['standard_bam'][ind]
+        if pd.notnull(metadata["standard_bam"][ind]):
+            if pathlib.Path(metadata["standard_bam"][ind]).is_file():
+                standard_bam = metadata["standard_bam"][ind]
             else:
                 standard_bam = None
         else:
             standard_bam = None
-            logger.info("genotype_variants::small_variants::multiple_samples:: Standard BAM file to genotype variants is not present.")
-        if pd.notnull(metadata['duplex_bam'][ind]):
-            if pathlib.Path(metadata['duplex_bam'][ind]).is_file():
-                duplex_bam = metadata['duplex_bam'][ind]
+            logger.info(
+                "genotype_variants::small_variants::multiple_samples:: Standard BAM file to genotype variants is not present."
+            )
+        if pd.notnull(metadata["duplex_bam"][ind]):
+            if pathlib.Path(metadata["duplex_bam"][ind]).is_file():
+                duplex_bam = metadata["duplex_bam"][ind]
             else:
                 duplex_bam = None
         else:
             duplex_bam = None
-        if pd.notnull(metadata['simplex_bam'][ind]):
-            if pathlib.Path(metadata['simplex_bam'][ind]).is_file():
-                simplex_bam = metadata['simplex_bam'][ind]
+        if pd.notnull(metadata["simplex_bam"][ind]):
+            if pathlib.Path(metadata["simplex_bam"][ind]).is_file():
+                simplex_bam = metadata["simplex_bam"][ind]
             else:
                 simplex_bam = None
         else:
             simplex_bam = None
         if duplex_bam and simplex_bam:
-            logger.info("genotype_variants::small_variants::multiple_samples:: duplex_bam and simplex_bam are present for genotype variants.")
+            logger.info(
+                "genotype_variants::small_variants::multiple_samples:: duplex_bam and simplex_bam are present for genotype variants."
+            )
         else:
-            logger.error("genotype_variants::small_variants::multiple_samples:: duplex_bam and simplex_bam are not present for genotype variants! Please provide both of them to run genotype_variants.")
+            logger.error(
+                "genotype_variants::small_variants::multiple_samples:: duplex_bam and simplex_bam are not present for genotype variants! Please provide both of them to run genotype_variants."
+            )
             exit(1)
-        if pd.notnull(metadata['sample_id'][ind]):
-            sample_id = metadata['sample_id'][ind]
+        if pd.notnull(metadata["sample_id"][ind]):
+            sample_id = metadata["sample_id"][ind]
         else:
-            logger.error("genotype_variants:small_variants:multiple_samples:: Sample id is not a string, please check input metadata file and try again.")
+            logger.error(
+                "genotype_variants:small_variants:multiple_samples:: Sample id is not a string, please check input metadata file and try again."
+            )
             exit(1)
-        logger.info("genotype_variants:small_variants::multiple_samples:: %s is being processed", sample_id)
+        logger.info(
+            "genotype_variants:small_variants::multiple_samples:: %s is being processed",
+            sample_id,
+        )
         final_file = all.callback(
             input_maf,
             reference_fasta,
