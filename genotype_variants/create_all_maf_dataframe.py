@@ -109,16 +109,16 @@ def create_all_maf_dataframe(
             exit(1)
 
         try:
-            df_s["t_total_count_reverse_standard"] = (
-                df_s["t_total_count_standard"] - df_s["t_total_count_forward_standard"]
+            df_s["t_alt_count_reverse_standard"] = (
+                df_s["t_alt_count_standard"]
+                - df_s["t_alt_count_forward_standard"]
             )
             df_s["t_ref_count_reverse_standard"] = (
-                df_s["t_total_count_reverse_standard"]
+                df_s["t_ref_count_standard"]
                 - df_s["t_ref_count_forward_standard"]
             )
-            df_s["t_alt_count_reverse_standard"] = (
-                df_s["t_total_count_reverse_standard"]
-                - df_s["t_alt_count_forward_standard"]
+            df_s["t_total_count_reverse_standard"] = (
+                df_s["t_total_count_standard"] - df_s["t_total_count_forward_standard"]
             )
             logger.debug(
                 "genotype:variants:small_variants::create_all_maf_dataframe:: Successfully generated reverse count columns in standard data frame"
@@ -230,12 +230,12 @@ def create_all_maf_dataframe(
             df_o_s_ds = df_o.merge(
                 df_s_ds[
                     [
-                        "t_alt_count_standard",
                         "t_ref_count_standard",
+                        "t_alt_count_standard",
                         "t_total_count_standard",
                         "t_variant_frequency_standard",
-                        "t_alt_count_forward_standard",
                         "t_ref_count_forward_standard",
+                        "t_alt_count_forward_standard",
                         "t_total_count_forward_standard",
                         "t_ref_count_reverse_standard",
                         "t_alt_count_reverse_standard",

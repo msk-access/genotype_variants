@@ -828,7 +828,8 @@ def multiple_samples(
                 simplex_bam = None
         else:
             simplex_bam = None
-        if duplex_bam and simplex_bam:
+'''            
+        if standard_bam or duplex_bam or simplex_bam):
             logger.info(
                 "genotype_variants::small_variants::multiple_samples:: duplex_bam and simplex_bam are present for genotype variants."
             )
@@ -837,6 +838,7 @@ def multiple_samples(
                 "genotype_variants::small_variants::multiple_samples:: duplex_bam and simplex_bam are not present for genotype variants! Please provide both of them to run genotype_variants."
             )
             exit(1)
+'''
         if pd.notnull(metadata["sample_id"][ind]):
             sample_id = metadata["sample_id"][ind]
         else:
