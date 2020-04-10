@@ -316,7 +316,7 @@ def create_all_maf_dataframe(
             exit(1)
 
         try:
-            df_o_s_ds.set_index(mutation_key, drop=False, inplace=True)
+            df_o_s.set_index(mutation_key, drop=False, inplace=True)
             logger.debug(
                 "genotype:variants:small_variants:create_all_maf_dataframe:: Successfully reset the index for merged data frame"
             )
