@@ -739,10 +739,10 @@ def multiple_samples(
     patient identifier as prefix
 
     Expected header of metadata_file in any order:
-    sample_id
-    maf
-    standard_bam
-    duplex_bam
+    sample_id,
+    maf,
+    standard_bam,
+    duplex_bam,
     simplex_bam
     
     For maf, standard_bam, duplex_bam and simplex_bam please include full path to the file.
