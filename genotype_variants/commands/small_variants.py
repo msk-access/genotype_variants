@@ -374,10 +374,10 @@ def generate_gbcms_cmd(
 def merge(
     patient_id, input_maf, input_standard_maf, input_duplex_maf, input_simplex_maf
 ):
-    """ 
-    Given original input MAF used as an input for GBCMS along with 
-    GBCMS generated output MAF for standard_bam, duplex_bam or simplex bam, 
-    Merge them into a single output MAF format. 
+    """
+    Given original input MAF used as an input for GBCMS along with
+    GBCMS generated output MAF for standard_bam, duplex_bam or simplex bam,
+    Merge them into a single output MAF format.
     If both duplex_bam and simplex_bam based MAF are provided
     the program will generate merged genotypes as well.
     The output file will be based on the give alphanumeric patient identifier as prefix.
@@ -426,16 +426,25 @@ def merge(
             "genotype_variants:small_variants:merge:: STANDARD BAM MAF -> %s",
             input_standard_maf,
         )
+
+        create_empty_maf_if_missing(input_standard_maf)
+
         i_maf = pd.read_csv(
             input_standard_maf, sep="\t", header="infer", index_col=False
         )
     if input_duplex_maf:
+
+        create_empty_maf_if_missing(input_duplex_maf)
+
         d_maf = pd.read_csv(input_duplex_maf, sep="\t", header="infer", index_col=False)
         logger.info(
             "genotype_variants:small_variants:merge:: DUPLEX BAM MAF -> %s",
             input_duplex_maf,
         )
     if input_simplex_maf:
+
+        create_empty_maf_if_missing(input_simplex_maf)
+
         s_maf = pd.read_csv(
             input_simplex_maf, sep="\t", header="infer", index_col=False
         )
@@ -501,6 +510,53 @@ def merge(
     logger.info("CPU process time: %.1f [min]" % ((t2_stop - t2_start) / 60))
     logger.info("--------------------------------------------------")
     return file_name
+
+
+def create_empty_maf_if_missing(filename):
+    header = [
+        'Hugo_Symbol',
+        'Entrez_Gene_Id',
+        'Center',
+        'NCBI_Build',
+        'Chromosome',
+        'Start_Position',
+        'End_Position',
+        'Strand',
+        'Variant_Classification',
+        'Variant_Type',
+        'Reference_Allele',
+        'Tumor_Seq_Allele1',
+        'Tumor_Seq_Allele2',
+        'dbSNP_RS',
+        'dbSNP_Val_Status',
+        'Tumor_Sample_Barcode',
+        'Matched_Norm_Sample_Barcode',
+        'Match_Norm_Seq_Allele1',
+        'Match_Norm_Seq_Allele2',
+        'Tumor_Validation_Allele1',
+        'Tumor_Validation_Allele2',
+        'Match_Norm_Validation_Allele1',
+        'Match_Norm_Validation_Allele2',
+        'Verification_Status',
+        'Validation_Status',
+        'Mutation_Status',
+        'Sequencing_Phase',
+        'Sequence_Source',
+        'Validation_Method',
+        'Score',
+        'BAM_File',
+        'Sequencer',
+        't_ref_count',
+        't_alt_count',
+        'n_ref_count',
+        'n_alt_count',
+        'Caller',
+        't_total_count',
+        't_variant_frequency']
+
+    if not os.path.exists(filename):
+        empty_df = pd.DataFrame(columns=header)
+        empty_df.to_csv(filename, index=False, sep='\t')
 
 
 def write_csv(file_name, data_frame):
@@ -617,9 +673,9 @@ def all(
     threads,
 ):
     """
-    Command that helps to generate genotyped MAF and 
+    Command that helps to generate genotyped MAF and
     merge the genotyped MAF.
-    the output file will be labelled with 
+    the output file will be labelled with
     patient identifier as prefix
     """
     pid = os.getpid()
@@ -734,9 +790,9 @@ def multiple_samples(
     threads,
 ):
     """
-    Command that helps to generate genotyped MAF and 
+    Command that helps to generate genotyped MAF and
     merge the genotyped MAF for multiple samples.
-    the output file will be labelled with 
+    the output file will be labelled with
     patient identifier as prefix
 
     Expected header of metadata_file in any order:
@@ -745,7 +801,7 @@ def multiple_samples(
     standard_bam,
     duplex_bam,
     simplex_bam
-    
+
     For maf, standard_bam, duplex_bam and simplex_bam please include full path to the file.
     """
     pid = os.getpid()
