@@ -552,7 +552,13 @@ def create_empty_maf_if_missing(filename):
         'n_alt_count',
         'Caller',
         't_total_count',
-        't_variant_frequency']
+        't_variant_frequency',
+        't_total_count_forward',
+        't_ref_count_forward',
+        't_alt_count_forward',
+        't_total_count_fragment',
+        't_ref_count_fragment',
+        't_alt_count_fragment']
 
     if not os.path.exists(filename):
         empty_df = pd.DataFrame(columns=header)
