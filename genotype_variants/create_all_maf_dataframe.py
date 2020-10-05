@@ -108,28 +108,33 @@ def create_all_maf_dataframe(
             )
             exit(1)
 
-        try:
-            df_s["t_alt_count_reverse_standard"] = (
-                df_s["t_alt_count_standard"]
-                - df_s["t_alt_count_forward_standard"]
-            )
-            df_s["t_ref_count_reverse_standard"] = (
-                df_s["t_ref_count_standard"]
-                - df_s["t_ref_count_forward_standard"]
-            )
-            df_s["t_total_count_reverse_standard"] = (
-                df_s["t_total_count_standard"] - df_s["t_total_count_forward_standard"]
-            )
-            logger.debug(
-                "genotype:variants:small_variants::create_all_maf_dataframe:: Successfully generated reverse count columns in standard data frame"
-            )
-        except:
-            e = sys.exc_info()[0]
-            logger.error(
-                "genotype:variants:small_variants::create_all_maf_dataframe:: Could not generate reverse count columns in standard data frame due to error, %s",
-                e,
-            )
-            exit(1)
+        if df_s.shape[0] > 0:
+            try:
+                df_s["t_alt_count_reverse_standard"] = (
+                    df_s["t_alt_count_standard"]
+                    - df_s["t_alt_count_forward_standard"]
+                )
+                df_s["t_ref_count_reverse_standard"] = (
+                    df_s["t_ref_count_standard"]
+                    - df_s["t_ref_count_forward_standard"]
+                )
+                df_s["t_total_count_reverse_standard"] = (
+                    df_s["t_total_count_standard"] - df_s["t_total_count_forward_standard"]
+                )
+                logger.debug(
+                    "genotype:variants:small_variants::create_all_maf_dataframe:: Successfully generated reverse count columns in standard data frame"
+                )
+            except:
+                e = sys.exc_info()[0]
+                logger.error(
+                    "genotype:variants:small_variants::create_all_maf_dataframe:: Could not generate reverse count columns in standard data frame due to error, %s",
+                    e
+                )
+                exit(1)
+        else:
+            df_s["t_alt_count_reverse_standard"] = []
+            df_s["t_ref_count_reverse_standard"] = []
+            df_s["t_total_count_reverse_standard"] = []
 
         try:
             df_s["Tumor_Sample_Barcode"] = df_s["Tumor_Sample_Barcode"].str.replace(
