@@ -66,40 +66,46 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         )
         exit(1)
 
-    try:
-        df_s["t_total_count_fragment_simplex"] = (
-            df_s["t_ref_count_fragment_simplex"] + df_s["t_alt_count_fragment_simplex"]
-        )
-        logger.debug(
-            "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Successfully generated t_total_count_fragment_simplex column"
-        )
-    except:
-        e = sys.exc_info()[0]
-        logger.error(
-            "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not generate t_total_count_fragment_simplex column due to error, %s",
-            e,
-        )
-        exit(1)
-
-    try:
-        df_s["t_vaf_fragment_simplex"] = (
-            df_s["t_alt_count_fragment_simplex"]
-            / (
-                df_s["t_alt_count_fragment_simplex"].astype(int)
-                + df_s["t_ref_count_fragment_simplex"].astype(int)
+    if df_s.shape[0] > 0:
+        try:
+            df_s["t_total_count_fragment_simplex"] = (
+                df_s["t_ref_count_fragment_simplex"] + df_s["t_alt_count_fragment_simplex"]
             )
-        ).round(4)
-        df_s["t_vaf_fragment_simplex"].fillna(0, inplace=True)
-        logger.debug(
-            "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully generated t_vaf_fragment_simplex column"
-        )
-    except:
-        e = sys.exc_info()[0]
-        logger.error(
-            "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not generate t_vaf_fragment_simplex column due to error, %s",
-            e,
-        )
-        exit(1)
+            logger.debug(
+                "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Successfully generated t_total_count_fragment_simplex column"
+            )
+        except:
+            e = sys.exc_info()[0]
+            logger.error(
+                "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not generate t_total_count_fragment_simplex column due to error, %s",
+                e
+            )
+            exit(1)
+    else:
+        df_s["t_total_count_fragment_simplex"] = []
+
+    if df_s.shape[0] > 0:
+        try:
+            df_s["t_vaf_fragment_simplex"] = (
+                df_s["t_alt_count_fragment_simplex"]
+                / (
+                    df_s["t_alt_count_fragment_simplex"].astype(int)
+                    + df_s["t_ref_count_fragment_simplex"].astype(int)
+                )
+            ).round(4)
+            df_s["t_vaf_fragment_simplex"].fillna(0, inplace=True)
+            logger.debug(
+                "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully generated t_vaf_fragment_simplex column"
+            )
+        except:
+            e = sys.exc_info()[0]
+            logger.error(
+                "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not generate t_vaf_fragment_simplex column due to error, %s",
+                e
+            )
+            exit(1)
+    else:
+        df_s["t_vaf_fragment_simplex"] = []
 
     try:
         df_s["Tumor_Sample_Barcode"] = df_s["Tumor_Sample_Barcode"].str.replace(
@@ -161,40 +167,46 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         )
         exit(1)
 
-    try:
-        df_d["t_total_count_fragment_duplex"] = (
-            df_d["t_ref_count_fragment_duplex"] + df_d["t_alt_count_fragment_duplex"]
-        )
-        logger.debug(
-            "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Successfully generated t_total_count_fragment_duplex column"
-        )
-    except:
-        e = sys.exc_info()[0]
-        logger.error(
-            "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not generate t_total_count_fragment_duplex column due to error, %s",
-            e,
-        )
-        exit(1)
-
-    try:
-        df_d["t_vaf_fragment_duplex"] = (
-            df_d["t_alt_count_fragment_duplex"]
-            / (
-                df_d["t_alt_count_fragment_duplex"].astype(int)
-                + df_d["t_ref_count_fragment_duplex"].astype(int)
+    if df_d.shape[0] > 0:
+        try:
+            df_d["t_total_count_fragment_duplex"] = (
+                df_d["t_ref_count_fragment_duplex"] + df_d["t_alt_count_fragment_duplex"]
             )
-        ).round(4)
-        df_d["t_vaf_fragment_duplex"].fillna(0, inplace=True)
-        logger.debug(
-            "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully generated t_vaf_fragment_duplex column"
-        )
-    except:
-        e = sys.exc_info()[0]
-        logger.error(
-            "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not generate t_vaf_fragment_duplex column due to error, %s",
-            e,
-        )
-        exit(1)
+            logger.debug(
+                "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Successfully generated t_total_count_fragment_duplex column"
+            )
+        except:
+            e = sys.exc_info()[0]
+            logger.error(
+                "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not generate t_total_count_fragment_duplex column due to error, %s",
+                e
+            )
+            exit(1)
+    else:
+        df_d["t_total_count_fragment_duplex"] = []
+
+    if df_d.shape[0] > 0:
+        try:
+            df_d["t_vaf_fragment_duplex"] = (
+                df_d["t_alt_count_fragment_duplex"]
+                / (
+                    df_d["t_alt_count_fragment_duplex"].astype(int)
+                    + df_d["t_ref_count_fragment_duplex"].astype(int)
+                )
+            ).round(4)
+            df_d["t_vaf_fragment_duplex"].fillna(0, inplace=True)
+            logger.debug(
+                "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Successfully generated t_vaf_fragment_duplex column"
+            )
+        except:
+            e = sys.exc_info()[0]
+            logger.error(
+                "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not generate t_vaf_fragment_duplex column due to error, %s",
+                e
+            )
+            exit(1)
+    else:
+        df_d["t_vaf_fragment_duplex"] = []
 
     try:
         df_d["Tumor_Sample_Barcode"] = df_d["Tumor_Sample_Barcode"].str.replace(
@@ -248,36 +260,43 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
             e,
         )
         exit(1)
+
     ##Add
-    try:
-        df_ds["t_ref_count_fragment_simplex_duplex"] = (
-            df_ds["t_ref_count_fragment_simplex"] + df_ds["t_ref_count_fragment_duplex"]
-        )
-        df_ds["t_alt_count_fragment_simplex_duplex"] = (
-            df_ds["t_alt_count_fragment_simplex"] + df_ds["t_alt_count_fragment_duplex"]
-        )
-        df_ds["t_total_count_fragment_simplex_duplex"] = (
-            df_ds["t_alt_count_fragment_simplex_duplex"]
-            + df_ds["t_ref_count_fragment_simplex_duplex"]
-        )
-        df_ds["t_vaf_fragment_simplex_duplex"] = (
-            df_ds["t_alt_count_fragment_simplex_duplex"]
-            / (
-                df_ds["t_alt_count_fragment_simplex_duplex"].astype(int)
-                + df_ds["t_ref_count_fragment_simplex_duplex"].astype(int)
+    if df_ds.shape[0] > 0:
+        try:
+            df_ds["t_ref_count_fragment_simplex_duplex"] = (
+                df_ds["t_ref_count_fragment_simplex"] + df_ds["t_ref_count_fragment_duplex"]
             )
-        ).round(4)
-        df_ds["t_vaf_fragment_simplex_duplex"].fillna(0, inplace=True)
-        logger.debug(
-            "genotype_variants:small_variants:create_duplex_simplex_dataframe:: Successfully generated column for merged counts"
-        )
-    except:
-        e = sys.exc_info()[0]
-        logger.error(
-            "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not generate merged count column in the merged data frame due to error, %s",
-            e,
-        )
-        exit(1)
+            df_ds["t_alt_count_fragment_simplex_duplex"] = (
+                df_ds["t_alt_count_fragment_simplex"] + df_ds["t_alt_count_fragment_duplex"]
+            )
+            df_ds["t_total_count_fragment_simplex_duplex"] = (
+                df_ds["t_alt_count_fragment_simplex_duplex"]
+                + df_ds["t_ref_count_fragment_simplex_duplex"]
+            )
+            df_ds["t_vaf_fragment_simplex_duplex"] = (
+                df_ds["t_alt_count_fragment_simplex_duplex"]
+                / (
+                    df_ds["t_alt_count_fragment_simplex_duplex"].astype(int)
+                    + df_ds["t_ref_count_fragment_simplex_duplex"].astype(int)
+                )
+            ).round(4)
+            df_ds["t_vaf_fragment_simplex_duplex"].fillna(0, inplace=True)
+            logger.debug(
+                "genotype_variants:small_variants:create_duplex_simplex_dataframe:: Successfully generated column for merged counts"
+            )
+        except:
+            e = sys.exc_info()[0]
+            logger.error(
+                "genotype:variants:small_variants:create_duplex_simplex_dataframe:: Could not generate merged count column in the merged data frame due to error, %s",
+                e
+            )
+            exit(1)
+    else:
+        df_ds["t_ref_count_fragment_simplex_duplex"] = []
+        df_ds["t_alt_count_fragment_simplex_duplex"] = []
+        df_ds["t_total_count_fragment_simplex_duplex"] = []
+        df_ds["t_vaf_fragment_simplex_duplex"] = []
 
     ##clean up
     try:
