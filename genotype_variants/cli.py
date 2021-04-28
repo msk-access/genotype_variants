@@ -40,7 +40,7 @@ with open(os.path.join(p_scriptpath.parent, "__init__.py"), "r") as f:
 __all__ = []
 __version__ = version
 __date__ = "2020-01-29"
-__updated__ = "2020-01-30"
+__updated__ = "2022-04-28"
 
 plugin_folder = os.path.join(os.path.dirname(__file__), 'commands')
 
