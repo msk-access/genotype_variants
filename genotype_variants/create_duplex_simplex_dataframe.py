@@ -53,7 +53,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         )
         exit(1)
 
-    try:
+"""     try:
         df_s["Tumor_Seq_Allele2"] = df_s["Tumor_Seq_Allele1"]
         logger.debug(
             "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Successfully generated Tumor_Seq_Allele2 column"
@@ -64,7 +64,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
             "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not generate Tumor_Seq_Allele2 column due to error, %s",
             e,
         )
-        exit(1)
+        exit(1) """
 
     if df_s.shape[0] > 0:
         try:
@@ -154,7 +154,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         )
         exit(1)
 
-    try:
+"""     try:
         df_d["Tumor_Seq_Allele2"] = df_d["Tumor_Seq_Allele1"]
         logger.debug(
             "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Successfully generated Tumor_Seq_Allele2 column"
@@ -165,7 +165,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
             "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Could not generate Tumor_Seq_Allele2 column due to error, %s",
             e,
         )
-        exit(1)
+        exit(1) """
 
     if df_d.shape[0] > 0:
         try:
