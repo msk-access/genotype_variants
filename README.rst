@@ -39,6 +39,8 @@ Which have the following sub-commands:
 
 **Please read the USAGE** (https://genotype-variants.readthedocs.io/en/latest/usage.html) **section of the documentation for more information**
 
+Requires GetBaseCountMultiSample v1.2.4 and above
+
 To Do
 -----
 
