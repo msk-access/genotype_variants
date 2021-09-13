@@ -328,6 +328,7 @@ def generate_gbcms_cmd(
         + str(reference_fasta)
         + " --thread "
         + str(threads)
+        + " --generic_counting"
     )
 
     return (cmd, output_maf)
