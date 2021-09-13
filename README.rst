@@ -32,7 +32,7 @@ For this we have the following command line submodule called **small_variants**.
 
 Which have the following sub-commands:
 
-* **generate**: To run GetBaseCountMultiSample on given BAM files
+* **generate**: To run `GetBaseCountMultiSample <https://github.com/msk-access/GetBaseCountsMultiSample>`_ version 1.2.5 on given BAM files
 * **merge**: To merge MAF format files w.r.t counts generated from the `generate` command.
 * **all**: This will run both of the sub-commands above `generate` and `merge` togather.
 * **multiple-samples**: This will run sub-commands `all` for multiple samples in the provided metadata file
