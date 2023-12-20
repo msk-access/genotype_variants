@@ -41,7 +41,7 @@ class TestGenotype_variants(unittest.TestCase):
 
         :return:
         """
-        df_merge = small_variants.create_duplex_simplex_maf(self.s_maf, self.d_maf)
+        df_merge = small_variants.create_duplex_simplex_dataframe(self.s_maf, self.d_maf)
         df_merge = df_merge.sort_index()
         expected = pd.read_csv('tests/test_data/expected.maf', sep='\t')
         expected = expected.set_index(self.mutation_key, drop=False)
