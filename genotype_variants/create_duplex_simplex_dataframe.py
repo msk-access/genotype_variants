@@ -1,6 +1,7 @@
 import logging
 import numpy as np
 import sys
+import pandas as pd
 
 """
 create_duplex_simplex_dataframe
@@ -237,6 +238,8 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         exit(1)
 
     ##Add
+    cols_min = ["t_ref_count_fragment_simplex","t_ref_count_fragment_duplex", "t_alt_count_fragment_simplex", "t_alt_count_fragment_duplex"]
+    df_ds[cols_min] = df_ds[cols_min].replace(np.nan, 0)
     if df_ds.shape[0] > 0:
         try:
             df_ds["t_ref_count_fragment_simplex_duplex"] = (
@@ -258,7 +261,6 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
                     + df_ds["t_ref_count_fragment_simplex_duplex"].astype(int)
                 )
             ).round(4)
-            df_ds["t_vaf_fragment_simplex_duplex"].fillna(0, inplace=True)
             logger.debug(
                 "genotype_variants:small_variants:create_duplex_simplex_dataframe:: Successfully generated column for merged counts"
             )
@@ -274,7 +276,7 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         df_ds["t_alt_count_fragment_simplex_duplex"] = []
         df_ds["t_total_count_fragment_simplex_duplex"] = []
         df_ds["t_vaf_fragment_simplex_duplex"] = []
-
+    # df_ds[cols].replace(0, np.nan, inplace=True)
     ##clean up
     try:
         df_ds.drop(
@@ -333,4 +335,16 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
     logger.info(
         "Successfully merged data frame and the counts for simplex and duplex MAF"
     )
+    # fill NA command for columns
+    cols =          [
+                        "t_total_count_fragment_simplex",
+                        "t_vaf_fragment_simplex",
+                        "t_total_count_fragment_duplex",
+                        "t_vaf_fragment_duplex",
+                        "t_ref_count_fragment_simplex_duplex",
+                        "t_alt_count_fragment_simplex_duplex",
+                        "t_total_count_fragment_simplex_duplex",
+                        "t_vaf_fragment_simplex_duplex",
+                    ]
+    df_ds[cols] = df_ds[cols].replace(np.nan, 0)
     return df_ds

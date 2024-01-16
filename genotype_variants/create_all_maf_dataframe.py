@@ -368,7 +368,7 @@ def create_all_maf_dataframe(
             exit(1)
 
     logger.info("Successfully merged data frame")
-
+    # fill NA for selected columns for returned df
     if df_o_s_ds is not None:
         return df_o_s_ds
     elif df_o_ds is not None:
