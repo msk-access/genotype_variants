@@ -30,8 +30,28 @@ ADD . /app
 
 # get build tools and install genotype variants
 
-RUN apt-get update && apt-get install --no-install-recommends -y gcc g++ zlib1g-dev \
+RUN apt-get update && apt-get install --no-install-recommends -y build-essential cmake gcc g++ zlib1g-dev libncurses5-dev libbz2-dev liblzma-dev curl unzip \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install -r requirements_dev.txt \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -L https://github.com/pezmaster31/bamtools/archive/master.zip -o bamtools.zip && \
+    unzip bamtools.zip && \
+    rm -r bamtools.zip
+
+# Build BamTools
+RUN cd bamtools-master && \
+    mkdir build && \
+    cd build && \
+    cmake -DCMAKE_INSTALL_PREFIX=bamtools-master .. && \
+    make
+
+# Install BamTools
+RUN make install
+
+RUN curl -L -O https://github.com/msk-access/GetBaseCountsMultiSample/archive/refs/tags/v1.2.5.zip \
+    && unzip v1.2.5.zip \
+    && cd GetBaseCountsMultiSample-1.2.5 \
+    && make all
+
+RUN pip install -r requirements_dev.txt \
     && python setup.py install
