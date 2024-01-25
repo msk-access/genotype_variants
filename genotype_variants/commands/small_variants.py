@@ -140,6 +140,13 @@ def cli():
     type=click.INT,
     help="Number of threads to use for GetBaseCountMultiSample",
 )
+@click.option(
+    "-s",
+    "--sample",
+    required=False,
+    type=click.STRING,
+    help="Override default sample name",
+)
 @click_log.simple_verbosity_option(logger)
 def generate(
     input_maf,
@@ -300,11 +307,12 @@ def generate_gbcms_cmd(
     fragment_count,
     mapping_quality,
     threads,
+    sample_id
 ):
 
     """This will help generate command for GetBaseCountMultiSample"""
-
-    sample_id = patient_id + "-" + btype
+    if not sample_id:
+        sample_id = patient_id + "-" + btype
     output_maf = pathlib.Path.cwd().joinpath(sample_id + "_genotyped.maf")
 
     cmd = (
