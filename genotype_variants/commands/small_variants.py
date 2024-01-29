@@ -142,7 +142,7 @@ def cli():
 )
 @click.option(
     "-s",
-    "--sample",
+    "--sample-name",
     required=False,
     type=click.STRING,
     help="Override default sample name",
@@ -160,6 +160,7 @@ def generate(
     fragment_count,
     mapping_quality,
     threads,
+    sample_name
 ):
     """Command that helps to generate genotyped MAF,
     the output file will be labelled with
@@ -235,6 +236,7 @@ def generate(
             fragment_count,
             mapping_quality,
             threads,
+            sample_name
         )
         p1 = run_cmd(cmd)
         logger.info(
@@ -256,6 +258,7 @@ def generate(
             fragment_count,
             mapping_quality,
             threads,
+            sample_name
         )
         p2 = run_cmd(cmd)
         logger.info(
@@ -277,6 +280,7 @@ def generate(
             fragment_count,
             mapping_quality,
             threads,
+            sample_name
         )
         p3 = run_cmd(cmd)
         logger.info(
@@ -307,14 +311,16 @@ def generate_gbcms_cmd(
     fragment_count,
     mapping_quality,
     threads,
-    sample_id
+    sample_name
 ):
 
     """This will help generate command for GetBaseCountMultiSample"""
-    if not sample_id:
+    outfile = patient_id + "-" + btype + "_genotyped.maf"
+    output_maf = pathlib.Path.cwd().joinpath(outfile)
+    if not sample_name:
         sample_id = patient_id + "-" + btype
-    output_maf = pathlib.Path.cwd().joinpath(sample_id + "_genotyped.maf")
-
+    else:
+        sample_id = sample_name
     cmd = (
         str(gbcms_path)
         + " --bam "
@@ -673,6 +679,13 @@ def write_csv(file_name, data_frame):
     type=click.INT,
     help="Number of threads to use for GetBaseCountMultiSample",
 )
+@click.option(
+    "-s",
+    "--sample-name",
+    required=False,
+    type=click.STRING,
+    help="Override default sample name",
+)
 @click_log.simple_verbosity_option(logger)
 def all(
     input_maf,
@@ -686,6 +699,7 @@ def all(
     fragment_count,
     mapping_quality,
     threads,
+    sample_name
 ):
     """
     Command that helps to generate genotyped MAF and
@@ -726,6 +740,7 @@ def all(
         fragment_count,
         mapping_quality,
         threads,
+        sample_name
     )
     final_file = merge.callback(
         patient_id, input_maf, standard_maf, duplex_maf, simplex_maf
