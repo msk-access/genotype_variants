@@ -315,12 +315,15 @@ def generate_gbcms_cmd(
 ):
 
     """This will help generate command for GetBaseCountMultiSample"""
-    outfile = patient_id + "-" + btype + "_genotyped.maf"
-    output_maf = pathlib.Path.cwd().joinpath(outfile)
+
     if not sample_name:
         sample_id = patient_id + "-" + btype
+        outfile = patient_id + "-" + btype + "_genotyped.maf"
+        output_maf = pathlib.Path.cwd().joinpath(outfile)
     else:
         sample_id = sample_name
+        outfile = sample_id + "-" + btype + "_genotyped.maf"
+        output_maf = pathlib.Path.cwd().joinpath(outfile)
     cmd = (
         str(gbcms_path)
         + " --bam "
@@ -387,7 +390,7 @@ def generate_gbcms_cmd(
 )
 @click_log.simple_verbosity_option(logger)
 def merge(
-    patient_id, input_maf, input_standard_maf, input_duplex_maf, input_simplex_maf
+    patient_id, input_maf, input_standard_maf, input_duplex_maf, input_simplex_maf, sample_name
 ):
     """
     Given original input MAF used as an input for GBCMS along with
@@ -470,11 +473,14 @@ def merge(
 
     # generate duplex simplex data frame
     ds_maf = None
-
+    if sample_name:
+        outfile = sample_name
+    else:
+        outfile = patient_id
     if d_maf is not None and s_maf is not None:
         ds_maf = cdsd(s_maf, d_maf)
         file_name = pathlib.Path.cwd().joinpath(
-            patient_id + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
+            outfile + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, ds_maf)
 
@@ -484,25 +490,25 @@ def merge(
     if o_maf is not None and i_maf is not None and ds_maf is not None:
         df_o_s_ds = camd(o_maf, i_maf, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
-            patient_id + "-ORG-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
+            outfile + "-ORG-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, df_o_s_ds)
     elif o_maf is not None and i_maf is not None:
         df_o_s = camd(o_maf, i_maf, None)
         file_name = pathlib.Path.cwd().joinpath(
-            patient_id + "-ORG-STD" + "_genotyped.maf"
+            outfile + "-ORG-STD" + "_genotyped.maf"
         )
         write_csv(file_name, df_o_s)
     elif o_maf is not None and ds_maf is not None:
         df_o_ds = camd(o_maf, None, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
-            patient_id + "-ORG-SIMPLEX-DUPLEX" + "_genotyped.maf"
+            outfile + "-ORG-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, df_o_ds)
     elif i_maf is not None and ds_maf is not None:
         df_s_ds = camd(None, i_maf, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
-            patient_id + "-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
+            outfile + "-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, df_s_ds)
     elif i_maf is not None and d_maf is not None:
@@ -515,7 +521,7 @@ def merge(
         pass
     else:
         file_name = pathlib.Path.cwd().joinpath(
-            patient_id + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
+            outfile + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, ds_maf)
     t1_stop = time.perf_counter()
@@ -743,7 +749,7 @@ def all(
         sample_name
     )
     final_file = merge.callback(
-        patient_id, input_maf, standard_maf, duplex_maf, simplex_maf
+        patient_id, input_maf, standard_maf, duplex_maf, simplex_maf, sample_name
     )
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
