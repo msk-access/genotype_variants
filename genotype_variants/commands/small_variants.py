@@ -318,12 +318,11 @@ def generate_gbcms_cmd(
 
     if not sample_name:
         sample_id = patient_id + "-" + btype
-        outfile = patient_id + "-" + btype + "_genotyped.maf"
-        output_maf = pathlib.Path.cwd().joinpath(outfile)
     else:
         sample_id = sample_name
-        outfile = sample_id + "-" + btype + "_genotyped.maf"
-        output_maf = pathlib.Path.cwd().joinpath(outfile)
+
+    outfile = sample_id + "-" + btype + "_genotyped.maf"
+    output_maf = pathlib.Path.cwd().joinpath(outfile)
     cmd = (
         str(gbcms_path)
         + " --bam "
@@ -473,10 +472,12 @@ def merge(
 
     # generate duplex simplex data frame
     ds_maf = None
-    if sample_name:
-        outfile = sample_name
-    else:
+
+    # base outfile path either provided sample name or patient id
+    if not sample_name:
         outfile = patient_id
+    else:
+        outfile = sample_name
     if d_maf is not None and s_maf is not None:
         ds_maf = cdsd(s_maf, d_maf)
         file_name = pathlib.Path.cwd().joinpath(
