@@ -320,7 +320,7 @@ def generate_gbcms_cmd(
 
     # if no sample_id is provided, it is inferred from the patient_id.
     if not sample_id:
-        sample_id = patient_id + "-" + btype
+        sample_id = patient_id
 
     outfile = sample_id + "-" + btype + "_genotyped.maf"
     output_maf = pathlib.Path.cwd().joinpath(outfile)
