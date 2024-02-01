@@ -194,11 +194,17 @@ def generate(
         )
         exit(1)
 
-    logger.info("small_variants: Patient ID: %s", patient_id)
     logger.info("small_variants: Input MAF: %s", input_maf)
     logger.info("small_variants: Reference FASTA: %s", reference_fasta)
+    if not (patient_id or sample_id):
+        logger.error(
+            "genotype_variants:small_variants:generate:: either Patient ID or Sample ID must be provided",
+            )
+        exit(1)
+    if patient_id:
+            logger.info("small_variants: Patient ID: %s", patient_id)
     if sample_id:
-        logger.info("small_variants: Sample ID: %s", sample_id)
+            logger.info("small_variants: Sample ID: %s", sample_id)
     if standard_bam:
         logger.info("small_variants: Standard BAM: %s", standard_bam)
     if duplex_bam:
@@ -318,7 +324,7 @@ def generate_gbcms_cmd(
 
     """This will help generate command for GetBaseCountMultiSample"""
 
-    # if no sample_id is provided, it is inferred from the patient_id.
+    # if no sample_id is provided, it is inferred from the patient_id
     if not sample_id:
         sample_id = patient_id
 
@@ -384,7 +390,7 @@ def generate_gbcms_cmd(
 @click.option(
     "-p",
     "--patient-id",
-    required=True,
+    required=False,
     type=click.STRING,
     help="Alphanumeric string indicating patient identifier",
 )
@@ -476,10 +482,17 @@ def merge(
     ds_maf = None
 
     # base outfile path either provided sample name or patient id
-    if not sample_id:
-        outfile = patient_id
-    else:
-        outfile = sample_id
+    if not (patient_id or sample_id):
+        logger.error(
+            "genotype_variants:small_variants:generate:: either Patient ID or Sample ID must be provided",
+            )
+        exit(1)
+    if patient_id:
+            logger.info("small_variants: Patient ID: %s", patient_id)
+            outfile = patient_id
+    if sample_id:
+            logger.info("small_variants: Sample ID: %s", sample_id)
+            outfile = sample_id
     if d_maf is not None and s_maf is not None:
         ds_maf = cdsd(s_maf, d_maf)
         file_name = pathlib.Path.cwd().joinpath(
@@ -624,7 +637,7 @@ def write_csv(file_name, data_frame):
 @click.option(
     "-p",
     "--patient-id",
-    required=True,
+    required=False,
     type=click.STRING,
     help="Alphanumeric string indicating patient identifier",
 )
