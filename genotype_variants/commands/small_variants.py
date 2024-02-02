@@ -307,7 +307,7 @@ def generate(
     logger.info("--------------------------------------------------")
     return (std_output_maf, simplex_output_maf, duplex_output_maf)
 
-
+@click_log.simple_verbosity_option(logger)
 def generate_gbcms_cmd(
     input_maf,
     btype,
@@ -326,8 +326,9 @@ def generate_gbcms_cmd(
 
     # if no sample_id is provided, it is inferred from the patient_id
     if not sample_id:
+        logger.warning("genotype_variants:small_variants:generate_gbcms: No Sample ID found: Inferring Sample ID from Patient ID for for Geontyping.")
         sample_id = patient_id
-
+    logger.info("genotype_variants:small_variants:generate_gbcms: Sample ID found. Genotyping using Sample ID.")
     outfile = sample_id + "-" + btype + "_genotyped.maf"
     output_maf = pathlib.Path.cwd().joinpath(outfile)
     cmd = (
