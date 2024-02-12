@@ -4,7 +4,7 @@ Usage
 
 Currently this module only supports genotyping and merging small variants (SNV and INDELS).
 
-For this we have the following command line submodule called **small_variants**. 
+For this we have the following command line submodule called **small_variants**.
 
 Which have the following sub-commands:
 
@@ -23,7 +23,8 @@ To use `small_variants generate` via command line here are the options::
     Usage: genotype_variants small_variants generate [OPTIONS]
 
     Command that helps to generate genotyped MAF, the output file will be
-    labelled with  patient identifier as prefix
+    labeled with the patient identifier as prefix, or sample identifier.
+    Sample identifier is prioritized over patient identifier.
 
     Options:
     -i, --input-maf PATH            Full path to small variants input file in
@@ -32,6 +33,8 @@ To use `small_variants generate` via command line here are the options::
                                     [required]
     -p, --patient-id TEXT           Alphanumeric string indicating patient
                                     identifier  [required]
+    -si, --sample-id TEXT           Alphanumeric string indicating sample
+                                    identifier
     -b, --standard-bam PATH         Full path to standard bam file, Note: This
                                     option assumes that the .bai file is present
                                     at same location as the bam file
@@ -57,8 +60,8 @@ To use `small_variants generate` via command line here are the options::
     --help                          Show this message and exit.
 
 
-.. code-block:: console 
-    
+.. code-block:: console
+
     genotype_variants small_variants generate \
     -i /path/to/input_maf \
     -r /path/to/reference_fasta \
@@ -66,7 +69,7 @@ To use `small_variants generate` via command line here are the options::
     -p patient_id \
     -b standard_bam \
     -d duplex_bam \
-    -s simplex_bam 
+    -s simplex_bam
 
 
 Expected Output
@@ -74,9 +77,9 @@ Expected Output
 
 In the current worrking directory if the above command is executed you will find the following files:
 
-    * patient_id-STANDARD_genotyped.maf 
-    * patient_id-DUPLEX_genotyped.maf 
-    * patient_id-SIMPLEX_genotyped.maf 
+    * patient_id-STANDARD_genotyped.maf
+    * patient_id-DUPLEX_genotyped.maf
+    * patient_id-SIMPLEX_genotyped.maf
 
 merge
 -----
@@ -108,13 +111,15 @@ To use `small_variants merge` via command line here are the options::
                                     simplex_bam
     -p, --patient-id TEXT           Alphanumeric string indicating patient
                                     identifier  [required]
+    -si, --sample-id TEXT           Alphanumeric string indicating sample
+                                    identifier
     -v, --verbosity LVL             Either CRITICAL, ERROR, WARNING, INFO or
                                     DEBUG
     --help                          Show this message and exit.
 
 
-.. code-block:: console 
-    
+.. code-block:: console
+
     genotype_variants small_variants merge \
     -i /path/to/input_maf \
     -std /path/to/standard_bam_genotyped_maf \
@@ -128,19 +133,19 @@ Expected Output
 
 In the current worrking directory if the above command is executed you will find the following files:
 
-    * patient_id-ORG-STD-SIMPLEX-DUPLEX_genotyped.maf 
+    * patient_id-ORG-STD-SIMPLEX-DUPLEX_genotyped.maf
 
 If only input_maf with duplex_bam_genotyped_maf and simplex_bam_genotyped_maf is given then the output file will be:
 
-    * patient_id-ORG-SIMPLEX-DUPLEX_genotyped.maf 
+    * patient_id-ORG-SIMPLEX-DUPLEX_genotyped.maf
 
 If only standard_bam_genotyped_maf with duplex_bam_genotyped_maf and simplex_bam_genotyped_maf is given then the output file will be:
 
-    * patient_id-STD-SIMPLEX-DUPLEX_genotyped.maf 
+    * patient_id-STD-SIMPLEX-DUPLEX_genotyped.maf
 
 If only duplex_bam_genotyped_maf and simplex_bam_genotyped_maf is given then the output file will be:
 
-    * patient_id-SIMPLEX-DUPLEX_genotyped.maf 
+    * patient_id-SIMPLEX-DUPLEX_genotyped.maf
 
 all
 ---
@@ -151,7 +156,8 @@ To use `small_variants all` via command line here are the options::
     Usage: genotype_variants small_variants all [OPTIONS]
 
     Command that helps to generate genotyped MAF and merge the genotyped MAF.
-    the output file will be labelled with patient identifier as prefix
+    The output file will be based on the give alphanumeric patient identifier as prefix, or sample identifier.
+    Sample identifier is prioritized over patient identifier.
 
     Options:
     -i, --input-maf PATH            Full path to small variants input file in
@@ -160,6 +166,8 @@ To use `small_variants all` via command line here are the options::
                                     [required]
     -p, --patient-id TEXT           Alphanumeric string indicating patient
                                     identifier  [required]
+    -si, --sample-id TEXT           Alphanumeric string indicating sample
+                                    identifier
     -b, --standard-bam PATH         Full path to standard bam file, Note: This
                                     option assumes that the .bai file is present
                                     at same location as the bam file
@@ -185,8 +193,8 @@ To use `small_variants all` via command line here are the options::
     --help                          Show this message and exit.
 
 
-.. code-block:: console 
-    
+.. code-block:: console
+
     genotype_variants small_variants all \
     -i /path/to/input_maf \
     -r /path/to/reference_fasta \
@@ -194,7 +202,7 @@ To use `small_variants all` via command line here are the options::
     -p patient_id \
     -b standard_bam \
     -d duplex_bam \
-    -s simplex_bam 
+    -s simplex_bam
 
 Expected Output
 """""""""""""""
@@ -243,8 +251,8 @@ To use `small_variants multiple-samples` via command line here are the options::
                                     DEBUG
     --help                          Show this message and exit.
 
-.. code-block:: console 
-    
+.. code-block:: console
+
     genotype_variants small_variants multiple-samples \
     -i /path/to/input_metadata \
     -r /path/to/reference_fasta \

@@ -140,6 +140,13 @@ def cli():
     type=click.INT,
     help="Number of threads to use for GetBaseCountMultiSample",
 )
+@click.option(
+    "-si",
+    "--sample-id",
+    required=False,
+    type=click.STRING,
+    help="Override default sample name",
+)
 @click_log.simple_verbosity_option(logger)
 def generate(
     input_maf,
@@ -153,6 +160,7 @@ def generate(
     fragment_count,
     mapping_quality,
     threads,
+    sample_id
 ):
     """Command that helps to generate genotyped MAF,
     the output file will be labelled with
@@ -186,9 +194,17 @@ def generate(
         )
         exit(1)
 
-    logger.info("small_variants: Patient ID: %s", patient_id)
     logger.info("small_variants: Input MAF: %s", input_maf)
     logger.info("small_variants: Reference FASTA: %s", reference_fasta)
+    if not (patient_id or sample_id):
+        logger.error(
+            "genotype_variants:small_variants:generate:: either Patient ID or Sample ID must be provided",
+            )
+        exit(1)
+    if patient_id:
+            logger.info("small_variants: Patient ID: %s", patient_id)
+    if sample_id:
+            logger.info("small_variants: Sample ID: %s", sample_id)
     if standard_bam:
         logger.info("small_variants: Standard BAM: %s", standard_bam)
     if duplex_bam:
@@ -228,6 +244,7 @@ def generate(
             fragment_count,
             mapping_quality,
             threads,
+            sample_id
         )
         p1 = run_cmd(cmd)
         logger.info(
@@ -249,6 +266,7 @@ def generate(
             fragment_count,
             mapping_quality,
             threads,
+            sample_id
         )
         p2 = run_cmd(cmd)
         logger.info(
@@ -270,6 +288,7 @@ def generate(
             fragment_count,
             mapping_quality,
             threads,
+            sample_id
         )
         p3 = run_cmd(cmd)
         logger.info(
@@ -288,7 +307,7 @@ def generate(
     logger.info("--------------------------------------------------")
     return (std_output_maf, simplex_output_maf, duplex_output_maf)
 
-
+@click_log.simple_verbosity_option(logger)
 def generate_gbcms_cmd(
     input_maf,
     btype,
@@ -300,13 +319,18 @@ def generate_gbcms_cmd(
     fragment_count,
     mapping_quality,
     threads,
+    sample_id
 ):
 
     """This will help generate command for GetBaseCountMultiSample"""
 
-    sample_id = patient_id + "-" + btype
-    output_maf = pathlib.Path.cwd().joinpath(sample_id + "_genotyped.maf")
-
+    # if no sample_id is provided, it is inferred from the patient_id
+    if not sample_id:
+        logger.warning("genotype_variants:small_variants:generate_gbcms: No Sample ID found: Inferring Sample ID from Patient ID for for Geontyping.")
+        sample_id = patient_id
+    logger.info("genotype_variants:small_variants:generate_gbcms: Sample ID found. Genotyping using Sample ID.")
+    outfile = sample_id + "-" + btype + "_genotyped.maf"
+    output_maf = pathlib.Path.cwd().joinpath(outfile)
     cmd = (
         str(gbcms_path)
         + " --bam "
@@ -367,13 +391,13 @@ def generate_gbcms_cmd(
 @click.option(
     "-p",
     "--patient-id",
-    required=True,
+    required=False,
     type=click.STRING,
     help="Alphanumeric string indicating patient identifier",
 )
 @click_log.simple_verbosity_option(logger)
 def merge(
-    patient_id, input_maf, input_standard_maf, input_duplex_maf, input_simplex_maf
+    patient_id, input_maf, input_standard_maf, input_duplex_maf, input_simplex_maf, sample_id
 ):
     """
     Given original input MAF used as an input for GBCMS along with
@@ -381,7 +405,8 @@ def merge(
     Merge them into a single output MAF format.
     If both duplex_bam and simplex_bam based MAF are provided
     the program will generate merged genotypes as well.
-    The output file will be based on the give alphanumeric patient identifier as prefix.
+    The output file will be based on the give alphanumeric patient identifier as prefix, or sample identifier.
+    Sample identifier is prioritized over patient identifier.
     """
     pid = os.getpid()
     logger_file = "genotype_variants_" + str(pid) + ".log"
@@ -457,10 +482,22 @@ def merge(
     # generate duplex simplex data frame
     ds_maf = None
 
+    # base outfile path either provided sample name or patient id
+    if not (patient_id or sample_id):
+        logger.error(
+            "genotype_variants:small_variants:generate:: either Patient ID or Sample ID must be provided",
+            )
+        exit(1)
+    if patient_id:
+            logger.info("small_variants: Patient ID: %s", patient_id)
+            outfile = patient_id
+    if sample_id:
+            logger.info("small_variants: Sample ID: %s", sample_id)
+            outfile = sample_id
     if d_maf is not None and s_maf is not None:
         ds_maf = cdsd(s_maf, d_maf)
         file_name = pathlib.Path.cwd().joinpath(
-            patient_id + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
+            outfile + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, ds_maf)
 
@@ -470,25 +507,25 @@ def merge(
     if o_maf is not None and i_maf is not None and ds_maf is not None:
         df_o_s_ds = camd(o_maf, i_maf, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
-            patient_id + "-ORG-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
+            outfile + "-ORG-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, df_o_s_ds)
     elif o_maf is not None and i_maf is not None:
         df_o_s = camd(o_maf, i_maf, None)
         file_name = pathlib.Path.cwd().joinpath(
-            patient_id + "-ORG-STD" + "_genotyped.maf"
+            outfile + "-ORG-STD" + "_genotyped.maf"
         )
         write_csv(file_name, df_o_s)
     elif o_maf is not None and ds_maf is not None:
         df_o_ds = camd(o_maf, None, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
-            patient_id + "-ORG-SIMPLEX-DUPLEX" + "_genotyped.maf"
+            outfile + "-ORG-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, df_o_ds)
     elif i_maf is not None and ds_maf is not None:
         df_s_ds = camd(None, i_maf, ds_maf)
         file_name = pathlib.Path.cwd().joinpath(
-            patient_id + "-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
+            outfile + "-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, df_s_ds)
     elif i_maf is not None and d_maf is not None:
@@ -501,7 +538,7 @@ def merge(
         pass
     else:
         file_name = pathlib.Path.cwd().joinpath(
-            patient_id + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
+            outfile + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, ds_maf)
     t1_stop = time.perf_counter()
@@ -601,7 +638,7 @@ def write_csv(file_name, data_frame):
 @click.option(
     "-p",
     "--patient-id",
-    required=True,
+    required=False,
     type=click.STRING,
     help="Alphanumeric string indicating patient identifier",
 )
@@ -665,6 +702,13 @@ def write_csv(file_name, data_frame):
     type=click.INT,
     help="Number of threads to use for GetBaseCountMultiSample",
 )
+@click.option(
+    "-si",
+    "--sample-id",
+    required=False,
+    type=click.STRING,
+    help="Override default sample name",
+)
 @click_log.simple_verbosity_option(logger)
 def all(
     input_maf,
@@ -678,12 +722,13 @@ def all(
     fragment_count,
     mapping_quality,
     threads,
+    sample_id
 ):
     """
     Command that helps to generate genotyped MAF and
     merge the genotyped MAF.
     the output file will be labelled with
-    patient identifier as prefix
+    patient, or sample identifier as prefix. Sample identifier prioritized.
     """
     pid = os.getpid()
     logger_file = "genotype_variants_" + str(pid) + ".log"
@@ -718,9 +763,10 @@ def all(
         fragment_count,
         mapping_quality,
         threads,
+        sample_id
     )
     final_file = merge.callback(
-        patient_id, input_maf, standard_maf, duplex_maf, simplex_maf
+        patient_id, input_maf, standard_maf, duplex_maf, simplex_maf, sample_id
     )
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
@@ -800,7 +846,8 @@ def multiple_samples(
     Command that helps to generate genotyped MAF and
     merge the genotyped MAF for multiple samples.
     the output file will be labelled with
-    patient identifier as prefix
+    patient identifier, or sample identifier as prefix.
+    Sample prioritized.
 
     Expected header of metadata_file in any order:
     sample_id,
