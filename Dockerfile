@@ -33,18 +33,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y build-essential
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# RUN curl -L https://github.com/pezmaster31/bamtools/archive/master.zip -o bamtools.zip && \
-#     unzip bamtools.zip && \
-#     rm -r bamtools.zip
-
-# # Build BamTools
-# RUN cd bamtools-master && \
-#     mkdir build && \
-#     cd build && \
-#     cmake -DCMAKE_INSTALL_PREFIX=bamtools-master .. && \
-#     make && \
-#     make install
-
 RUN cd /opt/ && \
     curl -L -O "https://github.com/msk-access/GetBaseCountsMultiSample/archive/refs/tags/v${GBCMS_VERSION}.tar.gz" && \
     tar xzvf v${GBCMS_VERSION}.tar.gz && \
