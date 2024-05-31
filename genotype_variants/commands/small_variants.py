@@ -395,13 +395,6 @@ def generate_gbcms_cmd(
     type=click.STRING,
     help="Alphanumeric string indicating patient identifier",
 )
-@click.option(
-    "-p",
-    "--patient-id",
-    required=False,
-    type=click.STRING,
-    help="Alphanumeric string indicating patient identifier",
-)
 @click_log.simple_verbosity_option(logger)
 def merge(
     patient_id, input_maf, input_standard_maf, input_duplex_maf, input_simplex_maf, sample_id, tumor_name_override
