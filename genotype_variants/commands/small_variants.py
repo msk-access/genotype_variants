@@ -395,6 +395,13 @@ def generate_gbcms_cmd(
     type=click.STRING,
     help="Alphanumeric string indicating patient identifier",
 )
+@click.option(
+    "-p",
+    "--patient-id",
+    required=False,
+    type=click.STRING,
+    help="Alphanumeric string indicating patient identifier",
+)
 @click_log.simple_verbosity_option(logger)
 def merge(
     patient_id, input_maf, input_standard_maf, input_duplex_maf, input_simplex_maf, sample_id
@@ -709,6 +716,14 @@ def write_csv(file_name, data_frame):
     type=click.STRING,
     help="Override default sample name",
 )
+@click.option(
+    "-to",
+    "--tumor_name_override",
+    required=False,
+    default=False,
+    type=click.BOOL,
+    help="Override the MAF Tumor_Sample_Barcode name with the BAM Tumor Sample Barcode",
+)
 @click_log.simple_verbosity_option(logger)
 def all(
     input_maf,
@@ -722,7 +737,9 @@ def all(
     fragment_count,
     mapping_quality,
     threads,
-    sample_id
+    sample_id,
+    tumor_name_override
+
 ):
     """
     Command that helps to generate genotyped MAF and
