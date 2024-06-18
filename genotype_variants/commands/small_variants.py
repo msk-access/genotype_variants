@@ -397,7 +397,7 @@ def generate_gbcms_cmd(
 )
 @click_log.simple_verbosity_option(logger)
 def merge(
-    patient_id, input_maf, input_standard_maf, input_duplex_maf, input_simplex_maf, sample_id
+    patient_id, input_maf, input_standard_maf, input_duplex_maf, input_simplex_maf, sample_id, tumor_name_override
 ):
     """
     Given original input MAF used as an input for GBCMS along with
@@ -489,13 +489,15 @@ def merge(
             )
         exit(1)
     if patient_id:
-            logger.info("small_variants: Patient ID: %s", patient_id)
-            outfile = patient_id
+            bam_id = patient_id
     if sample_id:
-            logger.info("small_variants: Sample ID: %s", sample_id)
-            outfile = sample_id
+            bam_id = sample_id
+    logger.info("small_variants: ID: %s", bam_id)
+    outfile = bam_id
     if d_maf is not None and s_maf is not None:
         ds_maf = cdsd(s_maf, d_maf)
+        if tumor_name_override:
+            ds_maf['Tumor_Sample_Barcode'] = bam_id
         file_name = pathlib.Path.cwd().joinpath(
             outfile + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
@@ -506,24 +508,32 @@ def merge(
     (df_o_s_ds, df_o_s, df_s_ds, df_s_ds) = None, None, None, None
     if o_maf is not None and i_maf is not None and ds_maf is not None:
         df_o_s_ds = camd(o_maf, i_maf, ds_maf)
+        if tumor_name_override:
+            df_o_s_ds['Tumor_Sample_Barcode'] = bam_id
         file_name = pathlib.Path.cwd().joinpath(
             outfile + "-ORG-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, df_o_s_ds)
     elif o_maf is not None and i_maf is not None:
         df_o_s = camd(o_maf, i_maf, None)
+        if tumor_name_override:
+            df_o_s['Tumor_Sample_Barcode'] = bam_id
         file_name = pathlib.Path.cwd().joinpath(
             outfile + "-ORG-STD" + "_genotyped.maf"
         )
         write_csv(file_name, df_o_s)
     elif o_maf is not None and ds_maf is not None:
         df_o_ds = camd(o_maf, None, ds_maf)
+        if tumor_name_override:
+            df_o_ds['Tumor_Sample_Barcode'] = bam_id
         file_name = pathlib.Path.cwd().joinpath(
             outfile + "-ORG-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         write_csv(file_name, df_o_ds)
     elif i_maf is not None and ds_maf is not None:
         df_s_ds = camd(None, i_maf, ds_maf)
+        if tumor_name_override:
+            df_s_ds['Tumor_Sample_Barcode'] = bam_id
         file_name = pathlib.Path.cwd().joinpath(
             outfile + "-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
@@ -540,6 +550,8 @@ def merge(
         file_name = pathlib.Path.cwd().joinpath(
             outfile + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
+        if tumor_name_override:
+            ds_maf['Tumor_Sample_Barcode'] = bam_id
         write_csv(file_name, ds_maf)
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
@@ -709,6 +721,14 @@ def write_csv(file_name, data_frame):
     type=click.STRING,
     help="Override default sample name",
 )
+@click.option(
+    "-to",
+    "--tumor_name_override",
+    required=False,
+    is_flag=True,
+    default=False,
+    help="Override the MAF Tumor_Sample_Barcode name with the BAM Tumor Sample Barcode",
+)
 @click_log.simple_verbosity_option(logger)
 def all(
     input_maf,
@@ -722,7 +742,9 @@ def all(
     fragment_count,
     mapping_quality,
     threads,
-    sample_id
+    sample_id,
+    tumor_name_override
+
 ):
     """
     Command that helps to generate genotyped MAF and
@@ -766,8 +788,9 @@ def all(
         sample_id
     )
     final_file = merge.callback(
-        patient_id, input_maf, standard_maf, duplex_maf, simplex_maf, sample_id
+        patient_id, input_maf, standard_maf, duplex_maf, simplex_maf, sample_id, tumor_name_override
     )
+
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
     logger.info("--------------------------------------------------")
