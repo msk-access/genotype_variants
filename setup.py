@@ -45,6 +45,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/msk-access/genotype_variants',
-    version='0.3.6',
+    version='0.3.8',
     zip_safe=False,
 )
