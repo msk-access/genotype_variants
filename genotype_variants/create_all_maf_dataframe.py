@@ -73,9 +73,9 @@ def create_all_maf_dataframe(
         try:
             df_s.rename(
                 columns={
-                    "t_alt_count": "t_alt_count_standard",
-                    "t_ref_count": "t_ref_count_standard",
-                    "t_total_count": "t_total_count_standard",
+                    "t_alt_count_fragment": "t_alt_count_standard",
+                    "t_ref_count_fragment": "t_ref_count_standard",
+                    "t_total_count_fragment": "t_total_count_standard",
                     "t_variant_frequency": "t_variant_frequency_standard",
                     "t_alt_count_forward": "t_alt_count_forward_standard",
                     "t_ref_count_forward": "t_ref_count_forward_standard",
