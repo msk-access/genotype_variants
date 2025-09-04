@@ -62,14 +62,17 @@ jobs:
           export PATH="$HOME/.cargo/bin:$PATH"
           
           # Create and activate virtual environment
-          uv venv .venv
+          uv venv .venv --python=3.8
           source .venv/bin/activate
           
-          # Install package with dev dependencies
-          uv pip install -e ".[dev]"
+          # Upgrade pip and install build tools
+          python -m pip install --upgrade pip build
+          
+          # Install package with dev dependencies from pyproject.toml
+          pip install -e ".[dev]"
           
           # Install pre-commit
-          uv pip install pre-commit
+          pip install pre-commit
           
           # Install pre-commit hooks
           pre-commit install-hooks
