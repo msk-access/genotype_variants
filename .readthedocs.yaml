@@ -49,7 +49,7 @@ build:
 
 # Optionally set the default branch
 defaults:
-  version: latest
+  version: develop
 
 # Optionally hide build date
 html_theme_options:
