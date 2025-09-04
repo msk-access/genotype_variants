@@ -47,9 +47,8 @@ build:
 #     - dist/
 #     - tests/
 
-# Optionally set the default branch
-defaults:
-  version: develop
+# Set the default version to 'develop'
+version: 'develop'
 
 # Optionally hide build date
 html_theme_options:
