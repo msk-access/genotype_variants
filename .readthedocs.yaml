@@ -47,7 +47,8 @@ build:
 #     - dist/
 #     - tests/
 
-# Optionally hide build date
-html_theme_options:
-  display_version: true
-  style_external_links: true
+# Theme options
+sphinx:
+  configuration: docs/conf.py
+  fail_on_warning: true
+  # Theme options are now set in docs/conf.py
