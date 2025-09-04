@@ -61,8 +61,8 @@ jobs:
           curl -LsSf https://astral.sh/uv/install.sh | sh
           export PATH="$HOME/.cargo/bin:$PATH"
           
-          # Create virtual environment with ensurepip
-          python -m venv .venv --clear --upgrade-deps
+          # Create virtual environment
+          python -m venv .venv --clear
           source .venv/bin/activate
           
           # Ensure pip is up to date and install build tools
