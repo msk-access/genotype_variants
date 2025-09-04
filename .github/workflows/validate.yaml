@@ -55,15 +55,27 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'pyproject.toml'
       
-      - name: Install uv (faster pip alternative)
+      - name: Install uv and dependencies
         run: |
+          # Install uv
           curl -sSf https://astral.sh/uv/install.sh | sh
+          
+          # Add uv to PATH for current step
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          
+          # Install package with dev dependencies
+          $HOME/.cargo/bin/uv pip install -e ".[dev]"
+          
+          # Install pre-commit
+          $HOME/.cargo/bin/uv pip install pre-commit
+          
+          # Install pre-commit hooks
+          pre-commit install-hooks
       
-      - name: Install package in development mode with dev dependencies
+      - name: Run pre-commit checks
         run: |
-          uv pip install -e ".[dev]"
-      
+          pre-commit run --show-diff-on-failure --color=always --all-files
+          
       - name: Run security scan with bandit
         run: |
           bandit -r genotype_variants -x tests
