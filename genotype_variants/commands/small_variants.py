@@ -309,53 +309,71 @@ def generate(
 
 @click_log.simple_verbosity_option(logger)
 def generate_gbcms_cmd(
-    input_maf,
-    btype,
-    reference_fasta,
-    gbcms_path,
-    patient_id,
-    bam,
-    filter_duplicate,
-    fragment_count,
-    mapping_quality,
-    threads,
-    sample_id
-):
+    input_maf: str,
+    btype: str,
+    reference_fasta: str,
+    gbcms_path: str,
+    patient_id: str,
+    bam: str,
+    filter_duplicate: bool,
+    fragment_count: int,
+    mapping_quality: int,
+    threads: int,
+    sample_id: str = None
+) -> tuple[str, pathlib.Path]:
+    """Generate command for GetBaseCountMultiSample.
 
-    """This will help generate command for GetBaseCountMultiSample"""
+    Args:
+        input_maf: Path to input MAF file
+        btype: Type of barcode, either 'STANDARD' or other
+        reference_fasta: Path to reference FASTA file
+        gbcms_path: Path to GetBaseCountMultiSample executable
+        patient_id: Patient ID
+        bam: Path to BAM file
+        filter_duplicate: Whether to filter duplicates
+        fragment_count: Fragment count threshold
+        mapping_quality: Minimum mapping quality
+        threads: Number of threads to use
+        sample_id: Sample ID (defaults to patient_id if not provided)
 
-    # if no sample_id is provided, it is inferred from the patient_id
-    if not sample_id:
-        logger.warning("genotype_variants:small_variants:generate_gbcms: No Sample ID found: Inferring Sample ID from Patient ID for for Geontyping.")
-        sample_id = patient_id
-    logger.info("genotype_variants:small_variants:generate_gbcms: Sample ID found. Genotyping using Sample ID.")
-    outfile = sample_id + "-" + btype + "_genotyped.maf"
-    output_maf = pathlib.Path.cwd().joinpath(outfile)
-    cmd = (
-        str(gbcms_path)
-        + " --bam "
-        + sample_id
-        + ":"
-        + str(bam)
-        + " --filter_duplicate "
-        + str(filter_duplicate)
-        + " --fragment_count "
-        + str(fragment_count)
-        + " --maf "
-        + str(input_maf)
-        + " --maq "
-        + str(mapping_quality)
-        + " --omaf"
-        + " --output "
-        + str(output_maf)
-        + " --fasta "
-        + str(reference_fasta)
-        + " --thread "
-        + str(threads)
-        + " --generic_counting"
-    )
+    Returns:
+        tuple: (command_string, output_maf_path)
+    """
+    if not all([input_maf, btype, reference_fasta, gbcms_path, patient_id, bam]):
+        raise ValueError("Missing required arguments")
 
-    return (cmd, output_maf)
+    # Use provided sample_id or fall back to patient_id
+    sample_id = sample_id or patient_id
+    if sample_id == patient_id:
+        logger.warning("genotype_variants:small_variants:generate_gbcms: "
+                      "No Sample ID provided, using Patient ID: %s", patient_id)
+    
+    # Prepare output filename
+    output_maf = pathlib.Path.cwd() / f"{sample_id}-{btype}_genotyped.maf"
+    
+    # Build command components
+    cmd_parts = [
+        str(gbcms_path),
+        f"--bam {sample_id}:{bam}",
+        f"--filter_duplicate {int(filter_duplicate)}",
+        f"--fragment_count {fragment_count}",
+        f"--maf {input_maf}",
+        f"--maq {mapping_quality}",
+        "--omaf",
+        f"--output {output_maf}",
+        f"--fasta {reference_fasta}",
+        f"--thread {threads}"
+    ]
+    
+    # Add generic_counting flag for non-STANDARD btype
+    if btype != "STANDARD":
+        cmd_parts.append("--generic_counting")
+    
+    # Join all command parts with spaces
+    cmd = " ".join(cmd_parts)
+    
+    logger.debug("Generated GBCMS command: %s", cmd)
+    return cmd, output_maf
 
 
 # Merge
