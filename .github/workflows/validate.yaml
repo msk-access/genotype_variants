@@ -55,11 +55,15 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'pyproject.toml'
       
-      - name: Install uv and dependencies
+      - name: Install uv and set up environment
         run: |
           # Install uv using the official method
           curl -LsSf https://astral.sh/uv/install.sh | sh
           export PATH="$HOME/.cargo/bin:$PATH"
+          
+          # Create and activate virtual environment
+          uv venv .venv
+          source .venv/bin/activate
           
           # Install package with dev dependencies
           uv pip install -e ".[dev]"

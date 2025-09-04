@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "genotype-variants"
-description = "A tool for genotyping SNV, INDEL, and SV variants in genomic data.
+description = "A tool for genotyping SNV, INDEL, and SV variants in genomic data."
 readme = "README.rst"
 authors = [
     {name = "Ronak Shah", email = "rons.shah@gmail.com"},
