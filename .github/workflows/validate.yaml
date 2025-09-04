@@ -18,11 +18,11 @@ on:
       - '.github/**'
 
 env:
-  PYTHON_VERSION: '3.8'
+  PYTHON_VERSION: '3.9'
 
 jobs:
   test:
-    name: Test Python 3.8 on Ubuntu
+    name: Test Python 3.9 on Ubuntu
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     

@@ -38,7 +38,7 @@ RUN --mount=type=cache,target=/root/.cache \
     cp GetBaseCountsMultiSample /usr/local/bin/
 
 # Final stage
-FROM --platform=linux/amd64 python:3.8-slim
+FROM --platform=linux/amd64 python:3.9-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
