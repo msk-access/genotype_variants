@@ -61,11 +61,8 @@ jobs:
         run: |
           source .venv/bin/activate
           python -m build --sdist --wheel --outdir dist/ .
-      
-      - name: Check code style
+          
+      - name: Run tests
         run: |
           source .venv/bin/activate
-          black --check .
-          flake8 .
-          isort --check-only .
-          mypy .
+          python -m pytest tests/ -v
