@@ -55,14 +55,12 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'pyproject.toml'
       
-      - name: Install uv and set up environment
+      - name: Set up environment and install dependencies
         run: |
-          # Install uv using the official method
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          export PATH="$HOME/.cargo/bin:$PATH"
-          
           # Create virtual environment
-          python -m venv .venv --clear
+          python -m venv .venv
+          
+          # Activate and set up the environment
           source .venv/bin/activate
           
           # Ensure pip is up to date and install build tools
@@ -78,15 +76,21 @@ jobs:
           pre-commit install-hooks
       
       - name: Run pre-commit checks
+        id: pre-commit
         run: |
+          # Activate virtual environment
+          source .venv/bin/activate
+          # Run pre-commit
           pre-commit run --show-diff-on-failure --color=always --all-files
           
       - name: Run security scan with bandit
         run: |
+          source .venv/bin/activate
           bandit -r genotype_variants -x tests
           
       - name: Build package
         run: |
+          source .venv/bin/activate
           python -m build --sdist --wheel --outdir dist/ .
       
       - name: Upload coverage
@@ -98,7 +102,7 @@ jobs:
       
       - name: Check code style
         run: |
-          pip install black flake8 isort mypy
+          source .venv/bin/activate
           black --check .
           flake8 .
           isort --check-only .
