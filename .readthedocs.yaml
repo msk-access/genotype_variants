@@ -47,9 +47,6 @@ build:
 #     - dist/
 #     - tests/
 
-# Set the default version to 'develop'
-version: 'develop'
-
 # Optionally hide build date
 html_theme_options:
   display_version: true
