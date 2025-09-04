@@ -1,14 +1,34 @@
-pip==20.0.2
-bump2version==0.5.11
-wheel==0.34.1
-watchdog==3.0.0
-flake8==3.7.9
-tox==3.14.3
-coverage==5.0.3
-Sphinx==2.3.1
-twine==3.1.1
-Click==7.0
-click-log==0.3.2
-pandas
-xlrd==1.2.0
-numpy>=1.20.3
+# Development requirements
+-r requirements.txt
+
+# Build & packaging
+build>=0.10.0
+pip-tools>=7.0.0
+wheel>=0.41.0
+setuptools>=68.0.0
+
+# Testing
+tox>=4.5.0
+pytest>=7.4.0
+pytest-cov>=4.1.0
+coverage[toml]>=7.2.7
+
+# Code quality
+black>=23.7.0
+flake8>=6.1.0
+isort>=5.12.0
+mypy>=1.5.0
+bandit>=1.7.5
+safety>=2.3.5
+
+# Documentation
+Sphinx>=7.0.1
+sphinx-rtd-theme>=1.2.2
+
+# Publishing
+twine>=4.0.2
+bump2version>=1.0.1
+
+# Development tools
+watchdog>=3.0.0
+ipython>=8.14.0
