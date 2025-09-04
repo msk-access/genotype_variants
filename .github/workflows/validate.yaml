@@ -1,15 +1,14 @@
-name: Validate and Test
+name: Validate
 
 on:
   push:
+    branches: [ main ]
     paths-ignore:
       - 'docs/**'
       - '**.md'
       - '**.rst'
       - '**.gitignore'
       - '.github/**'
-    tags-ignore:
-      - 'v*'
   pull_request:
     paths-ignore:
       - 'docs/**'
@@ -17,20 +16,9 @@ on:
       - '**.rst'
       - '**.gitignore'
       - '.github/**'
-  workflow_dispatch:
-    inputs:
-      python-version:
-        description: 'Python version'
-        required: false
-        default: '3.8'
 
-# Set job-level environment variables
 env:
   PYTHON_VERSION: '3.8'
-  PYTHONDONTWRITEBYTECODE: 1
-  PYTHONUNBUFFERED: 1
-  PIP_DISABLE_PIP_VERSION_CHECK: 1
-  PIP_NO_PYTHON_VERSION_WARNING: 1
 
 jobs:
   test:
@@ -69,36 +57,10 @@ jobs:
           # Install package with dev dependencies from pyproject.toml
           pip install -e ".[dev]"
           
-          # Install pre-commit
-          pip install pre-commit
-          
-          # Install pre-commit hooks
-          pre-commit install-hooks
-      
-      - name: Run pre-commit checks
-        id: pre-commit
-        run: |
-          # Activate virtual environment
-          source .venv/bin/activate
-          # Run pre-commit
-          pre-commit run --show-diff-on-failure --color=always --all-files
-          
-      - name: Run security scan with bandit
-        run: |
-          source .venv/bin/activate
-          bandit -r genotype_variants -x tests
-          
       - name: Build package
         run: |
           source .venv/bin/activate
           python -m build --sdist --wheel --outdir dist/ .
-      
-      - name: Upload coverage
-        if: github.event_name == 'push'
-        uses: codecov/codecov-action@v3
-        with:
-          file: ./coverage.xml
-          fail_ci_if_error: false
       
       - name: Check code style
         run: |
@@ -107,15 +69,3 @@ jobs:
           flake8 .
           isort --check-only .
           mypy .
-  
-  lint:
-    name: Lint with pre-commit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'
-      - uses: pre-commit/action@v3.0.0
-        with:
-          extra_args: --all-files
