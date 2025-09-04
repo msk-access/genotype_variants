@@ -15,7 +15,7 @@ build:
     python: "3.9"
   jobs:
     post_create_environment:
-      - pip install -r docs/requirements.txt
+      - pip install -r requirements.txt
       - pip install -e .[docs]
 
 # Optionally build docs in additional formats such as PDF
@@ -33,7 +33,7 @@ build:
     python: "3.9"
   jobs:
     post_create_environment:
-      - pip install -r docs/requirements.txt
+      - pip install -r requirements.txt
 
 # Optionally include or exclude patterns
 # build:
