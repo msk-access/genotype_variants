@@ -57,17 +57,15 @@ jobs:
       
       - name: Install uv and dependencies
         run: |
-          # Install uv
-          curl -sSf https://astral.sh/uv/install.sh | sh
-          
-          # Add uv to PATH for current step
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          # Install uv using the official method
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          export PATH="$HOME/.cargo/bin:$PATH"
           
           # Install package with dev dependencies
-          $HOME/.cargo/bin/uv pip install -e ".[dev]"
+          uv pip install -e ".[dev]"
           
           # Install pre-commit
-          $HOME/.cargo/bin/uv pip install pre-commit
+          uv pip install pre-commit
           
           # Install pre-commit hooks
           pre-commit install-hooks
