@@ -3,6 +3,7 @@ import os
 import sys
 import pathlib
 import logging
+
 try:
     import click
 except ImportError as e:
@@ -42,7 +43,8 @@ __version__ = version
 __date__ = "2020-01-29"
 __updated__ = "2022-04-28"
 
-plugin_folder = os.path.join(os.path.dirname(__file__), 'commands')
+plugin_folder = os.path.join(os.path.dirname(__file__), "commands")
+
 
 class MyCLI(click.MultiCommand):
 
@@ -50,7 +52,7 @@ class MyCLI(click.MultiCommand):
         """Dynamically get the list of commands."""
         rv = []
         for filename in os.listdir(plugin_folder):
-            if filename.endswith('.py') and not filename.startswith('__init__'):
+            if filename.endswith(".py") and not filename.startswith("__init__"):
                 rv.append(filename[:-3])
         rv.sort()
         return rv
@@ -58,15 +60,17 @@ class MyCLI(click.MultiCommand):
     def get_command(self, ctx, name):
         """Dynamically get the command."""
         ns = {}
-        fn = os.path.join(plugin_folder, name + '.py')
+        fn = os.path.join(plugin_folder, name + ".py")
         with open(fn) as f:
-            code = compile(f.read(), fn, 'exec')
+            code = compile(f.read(), fn, "exec")
             eval(code, ns, ns)
-        return ns['cli']
+        return ns["cli"]
 
 
 @click.command(cls=MyCLI)
-@click.version_option(None, "-v", "--version", message="%(version)s", prog_name="genotype_variants")
+@click.version_option(
+    None, "-v", "--version", message="%(version)s", prog_name="genotype_variants"
+)
 def main(args=None):
     """Console script for genotype_variants."""
     pass

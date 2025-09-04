@@ -18,6 +18,8 @@ logger = logging.getLogger("genotype_variants")
 logger.info(
     "genotype:variants:small_variants::create_duplex_simplex_dataframe:: Generating duplex simplex dataframe"
 )
+
+
 # Adopted from Maysun script
 def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
     """Code to merge duplex and simplex fragment counts in MAF format"""
@@ -238,7 +240,12 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         exit(1)
 
     ##Add
-    cols_min = ["t_ref_count_fragment_simplex","t_ref_count_fragment_duplex", "t_alt_count_fragment_simplex", "t_alt_count_fragment_duplex"]
+    cols_min = [
+        "t_ref_count_fragment_simplex",
+        "t_ref_count_fragment_duplex",
+        "t_alt_count_fragment_simplex",
+        "t_alt_count_fragment_duplex",
+    ]
     df_ds[cols_min] = df_ds[cols_min].replace(np.nan, 0)
     if df_ds.shape[0] > 0:
         try:
@@ -336,15 +343,15 @@ def create_duplex_simplex_dataframe(simplex_dataframe, duplex_dataframe):
         "Successfully merged data frame and the counts for simplex and duplex MAF"
     )
     # fill NA command for columns
-    cols =          [
-                        "t_total_count_fragment_simplex",
-                        "t_vaf_fragment_simplex",
-                        "t_total_count_fragment_duplex",
-                        "t_vaf_fragment_duplex",
-                        "t_ref_count_fragment_simplex_duplex",
-                        "t_alt_count_fragment_simplex_duplex",
-                        "t_total_count_fragment_simplex_duplex",
-                        "t_vaf_fragment_simplex_duplex",
-                    ]
+    cols = [
+        "t_total_count_fragment_simplex",
+        "t_vaf_fragment_simplex",
+        "t_total_count_fragment_duplex",
+        "t_vaf_fragment_duplex",
+        "t_ref_count_fragment_simplex_duplex",
+        "t_alt_count_fragment_simplex_duplex",
+        "t_total_count_fragment_simplex_duplex",
+        "t_vaf_fragment_simplex_duplex",
+    ]
     df_ds[cols] = df_ds[cols].replace(np.nan, 0)
     return df_ds
