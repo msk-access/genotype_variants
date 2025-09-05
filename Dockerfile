@@ -1,44 +1,61 @@
 # Build stage for GetBaseCountsMultiSample
-FROM --platform=linux/amd64 debian:bullseye-slim as builder
+FROM ubuntu:latest as builder
 
 ARG GBCMS_VERSION="1.2.5"
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install build dependencies with versions
-RUN --mount=type=cache,target=/var/cache/apt \
-    --mount=type=cache,target=/var/lib/apt \
-    apt-get update && apt-get install --no-install-recommends -y \
-    build-essential=12.9 \
-    ca-certificates=20210119 \
-    cmake=3.18.4-2+deb11u1 \
-    curl=7.74.0-1.3+deb11u10 \
-    g++=4:10.2.1-1 \
-    gcc=4:10.2.1-1 \
-    libjsoncpp-dev=1.9.4-4 \
-    make=4.3-4.1 \
-    unzip=6.0-26+deb11u1 \
-    zlib1g-dev=1:1.2.11.dfsg-2+deb11u2 \
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    ca-certificates \
+    cmake \
+    curl \
+    g++ \
+    gcc \
+    libjsoncpp-dev \
+    make \
+    unzip \
+    zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Build GetBaseCountsMultiSample with caching
-RUN --mount=type=cache,target=/root/.cache \
-    cd /opt && \
+# Build GetBaseCountsMultiSample
+RUN cd /opt && \
     curl -fsSL -o v${GBCMS_VERSION}.tar.gz \
         "https://github.com/msk-access/GetBaseCountsMultiSample/archive/refs/tags/v${GBCMS_VERSION}.tar.gz" && \
     tar xzf v${GBCMS_VERSION}.tar.gz && \
-    cd /opt/GetBaseCountsMultiSample-${GBCMS_VERSION}/bamtools-master && \
+    cd /opt/GetBaseCountsMultiSample-${GBCMS_VERSION} && \
+    # Clean and build bamtools
+    cd bamtools-master && \
+    rm -rf build && \
     mkdir -p build && \
     cd build/ && \
     cmake -DCMAKE_CXX_FLAGS=-std=c++03 -DCMAKE_BUILD_TYPE=Release .. && \
     make -j$(nproc) && \
     make install && \
     cp ../lib/libbamtools.so.2.3.0 /usr/lib/ && \
+    # Build GetBaseCountsMultiSample
     cd /opt/GetBaseCountsMultiSample-${GBCMS_VERSION} && \
     make -j$(nproc) && \
     cp GetBaseCountsMultiSample /usr/local/bin/
 
 # Final stage
-FROM --platform=linux/amd64 python:3.9-slim
+FROM ubuntu:latest
+
+# Install Python and other runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip \
+    python3-venv \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create and activate a virtual environment
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Upgrade pip in the virtual environment
+RUN pip install --no-cache-dir --upgrade pip
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -48,13 +65,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     DEBIAN_FRONTEND=noninteractive \
     GIT_PYTHON_REFRESH=quiet
 
-# Install runtime dependencies with versions
-RUN --mount=type=cache,target=/var/cache/apt \
-    --mount=type=cache,target=/var/lib/apt \
-    apt-get update && apt-get install --no-install-recommends -y \
-    libgomp1=10.2.1-6 \
-    libjsoncpp24=1.9.4-4 \
-    zlib1g=1:1.2.11.dfsg-2+deb11u2 \
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgomp1 \
+    libjsoncpp-dev \
+    zlib1g \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy GetBaseCountsMultiSample and its dependencies from builder
@@ -62,30 +77,18 @@ COPY --from=builder /usr/local/bin/GetBaseCountsMultiSample /usr/local/bin/
 COPY --from=builder /usr/lib/libbamtools.so.2.3.0 /usr/lib/
 RUN ldconfig
 
-# Set working directory
+# Set working directory (creates the directory if it doesn't exist)
 WORKDIR /app
 
-# Create non-root user early for better layer caching
-RUN groupadd -r appuser && \
-    useradd -r -g appuser appuser && \
-    mkdir -p /app && \
-    chown -R appuser:appuser /app
-
 # Copy only necessary files for installation
-COPY --chown=appuser:appuser pyproject.toml setup.py README.rst ./
-COPY --chown=appuser:appuser genotype_variants/ ./genotype_variants/
+COPY pyproject.toml README.rst ./
+COPY genotype_variants/ ./genotype_variants/
 
-# Install Python dependencies and package with uv for faster builds
-USER appuser
-ENV PATH="/home/appuser/.local/bin:${PATH}"
-
-# Install uv and build the package
-RUN --mount=type=cache,target=/home/appuser/.cache/pip \
-    python -m pip install --user --no-warn-script-location uv && \
-    uv pip install --no-cache-dir -e .[dev]
+# Install the package in development mode
+RUN pip install --no-cache-dir -e .[dev]
 
 # Set default command and entrypoint
-ENTRYPOINT ["python", "-m", "genotype_variants"]
+ENTRYPOINT ["genotype_variants"]
 CMD ["--help"]
 
 # Metadata
