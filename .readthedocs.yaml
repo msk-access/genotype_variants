@@ -1,0 +1,54 @@
+# .readthedocs.yaml
+# Read the Docs configuration file
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+
+version: 2
+
+# Build documentation in the docs/ directory with Sphinx
+sphinx:
+  configuration: docs/conf.py
+
+# Set the Python version and install requirements
+build:
+  os: ubuntu-24.04
+  tools:
+    python: "3.9"
+  jobs:
+    post_create_environment:
+      - pip install -r requirements.txt
+      - pip install -e .[docs]
+
+# Optionally build docs in additional formats such as PDF
+formats: all
+
+# Optionally set the version of Sphinx
+sphinx:
+  configuration: docs/conf.py
+  fail_on_warning: true
+
+# Optionally enable PDF/Epub builds
+build:
+  os: ubuntu-24.04
+  tools:
+    python: "3.9"
+  jobs:
+    post_create_environment:
+      - pip install -r requirements.txt
+
+# Optionally include or exclude patterns
+# build:
+#   file: docs/conf.py
+#   include_paths:
+#     - docs/
+#     - src/
+#   exclude_patterns:
+#     - .venv/
+#     - build/
+#     - dist/
+#     - tests/
+
+# Theme options
+sphinx:
+  configuration: docs/conf.py
+  fail_on_warning: true
+  # Theme options are now set in docs/conf.py

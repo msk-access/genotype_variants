@@ -1,5 +1,6 @@
 import logging
 import subprocess
+
 """
 run_cmd
 ~~~~~~~~~~~~~~~
@@ -12,6 +13,7 @@ Description: Code to run shell commands
 """
 # Making logging possible
 logger = logging.getLogger("genotype_variants")
+
 
 def run_cmd(cmd):
     """Code to run shell commands"""
@@ -31,7 +33,5 @@ def run_cmd(cmd):
     if stderr is None:
         logger.debug("run_cmd: run: Read: %s", stdout.decode("utf-8"))
     else:
-        logger.error(
-            "run_cmd: run: could not run"
-        )
-    return(out)
+        logger.error("run_cmd: run: could not run")
+    return out

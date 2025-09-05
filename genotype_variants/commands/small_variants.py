@@ -112,7 +112,7 @@ def cli():
     "-fd",
     "--filter-duplicate",
     required=False,
-    default=0,
+    default=1,
     type=click.INT,
     help="Filter duplicate parameter for GetBaseCountMultiSample",
 )
@@ -160,7 +160,7 @@ def generate(
     fragment_count,
     mapping_quality,
     threads,
-    sample_id
+    sample_id,
 ):
     """Command that helps to generate genotyped MAF,
     the output file will be labelled with
@@ -199,12 +199,12 @@ def generate(
     if not (patient_id or sample_id):
         logger.error(
             "genotype_variants:small_variants:generate:: either Patient ID or Sample ID must be provided",
-            )
+        )
         exit(1)
     if patient_id:
-            logger.info("small_variants: Patient ID: %s", patient_id)
+        logger.info("small_variants: Patient ID: %s", patient_id)
     if sample_id:
-            logger.info("small_variants: Sample ID: %s", sample_id)
+        logger.info("small_variants: Sample ID: %s", sample_id)
     if standard_bam:
         logger.info("small_variants: Standard BAM: %s", standard_bam)
     if duplex_bam:
@@ -244,7 +244,7 @@ def generate(
             fragment_count,
             mapping_quality,
             threads,
-            sample_id
+            sample_id,
         )
         p1 = run_cmd(cmd)
         logger.info(
@@ -266,7 +266,7 @@ def generate(
             fragment_count,
             mapping_quality,
             threads,
-            sample_id
+            sample_id,
         )
         p2 = run_cmd(cmd)
         logger.info(
@@ -288,7 +288,7 @@ def generate(
             fragment_count,
             mapping_quality,
             threads,
-            sample_id
+            sample_id,
         )
         p3 = run_cmd(cmd)
         logger.info(
@@ -307,55 +307,77 @@ def generate(
     logger.info("--------------------------------------------------")
     return (std_output_maf, simplex_output_maf, duplex_output_maf)
 
+
 @click_log.simple_verbosity_option(logger)
 def generate_gbcms_cmd(
-    input_maf,
-    btype,
-    reference_fasta,
-    gbcms_path,
-    patient_id,
-    bam,
-    filter_duplicate,
-    fragment_count,
-    mapping_quality,
-    threads,
-    sample_id
-):
+    input_maf: str,
+    btype: str,
+    reference_fasta: str,
+    gbcms_path: str,
+    patient_id: str,
+    bam: str,
+    filter_duplicate: bool,
+    fragment_count: int,
+    mapping_quality: int,
+    threads: int,
+    sample_id: str = None,
+) -> tuple[str, pathlib.Path]:
+    """Generate command for GetBaseCountMultiSample.
 
-    """This will help generate command for GetBaseCountMultiSample"""
+    Args:
+        input_maf: Path to input MAF file
+        btype: Type of barcode, either 'STANDARD' or other
+        reference_fasta: Path to reference FASTA file
+        gbcms_path: Path to GetBaseCountMultiSample executable
+        patient_id: Patient ID
+        bam: Path to BAM file
+        filter_duplicate: Whether to filter duplicates
+        fragment_count: Fragment count threshold
+        mapping_quality: Minimum mapping quality
+        threads: Number of threads to use
+        sample_id: Sample ID (defaults to patient_id if not provided)
 
-    # if no sample_id is provided, it is inferred from the patient_id
-    if not sample_id:
-        logger.warning("genotype_variants:small_variants:generate_gbcms: No Sample ID found: Inferring Sample ID from Patient ID for for Geontyping.")
-        sample_id = patient_id
-    logger.info("genotype_variants:small_variants:generate_gbcms: Sample ID found. Genotyping using Sample ID.")
-    outfile = sample_id + "-" + btype + "_genotyped.maf"
-    output_maf = pathlib.Path.cwd().joinpath(outfile)
-    cmd = (
-        str(gbcms_path)
-        + " --bam "
-        + sample_id
-        + ":"
-        + str(bam)
-        + " --filter_duplicate "
-        + str(filter_duplicate)
-        + " --fragment_count "
-        + str(fragment_count)
-        + " --maf "
-        + str(input_maf)
-        + " --maq "
-        + str(mapping_quality)
-        + " --omaf"
-        + " --output "
-        + str(output_maf)
-        + " --fasta "
-        + str(reference_fasta)
-        + " --thread "
-        + str(threads)
-        + " --generic_counting"
-    )
+    Returns:
+        tuple: (command_string, output_maf_path)
+    """
+    if not all([input_maf, btype, reference_fasta, gbcms_path, patient_id, bam]):
+        raise ValueError("Missing required arguments")
 
-    return (cmd, output_maf)
+    # Use provided sample_id or fall back to patient_id
+    sample_id = sample_id or patient_id
+    if sample_id == patient_id:
+        logger.warning(
+            "genotype_variants:small_variants:generate_gbcms: "
+            "No Sample ID provided, using Patient ID: %s",
+            patient_id,
+        )
+
+    # Prepare output filename
+    output_maf = pathlib.Path.cwd() / f"{sample_id}-{btype}_genotyped.maf"
+
+    # Build command components
+    cmd_parts = [
+        str(gbcms_path),
+        f"--bam {sample_id}:{bam}",
+        f"--filter_duplicate {int(filter_duplicate)}",
+        f"--fragment_count {fragment_count}",
+        f"--maf {input_maf}",
+        f"--maq {mapping_quality}",
+        "--omaf",
+        f"--output {output_maf}",
+        f"--fasta {reference_fasta}",
+        f"--thread {threads}",
+    ]
+
+    # Add generic_counting flag for non-STANDARD btype
+    if btype != "STANDARD":
+        cmd_parts.append("--generic_counting")
+
+    # Join all command parts with spaces
+    cmd = " ".join(cmd_parts)
+
+    logger.debug("Generated GBCMS command: %s", cmd)
+    return cmd, output_maf
 
 
 # Merge
@@ -397,7 +419,13 @@ def generate_gbcms_cmd(
 )
 @click_log.simple_verbosity_option(logger)
 def merge(
-    patient_id, input_maf, input_standard_maf, input_duplex_maf, input_simplex_maf, sample_id, tumor_name_override
+    patient_id,
+    input_maf,
+    input_standard_maf,
+    input_duplex_maf,
+    input_simplex_maf,
+    sample_id,
+    tumor_name_override,
 ):
     """
     Given original input MAF used as an input for GBCMS along with
@@ -486,18 +514,18 @@ def merge(
     if not (patient_id or sample_id):
         logger.error(
             "genotype_variants:small_variants:generate:: either Patient ID or Sample ID must be provided",
-            )
+        )
         exit(1)
     if patient_id:
-            bam_id = patient_id
+        bam_id = patient_id
     if sample_id:
-            bam_id = sample_id
+        bam_id = sample_id
     logger.info("small_variants: ID: %s", bam_id)
     outfile = bam_id
     if d_maf is not None and s_maf is not None:
         ds_maf = cdsd(s_maf, d_maf)
         if tumor_name_override:
-            ds_maf['Tumor_Sample_Barcode'] = bam_id
+            ds_maf["Tumor_Sample_Barcode"] = bam_id
         file_name = pathlib.Path.cwd().joinpath(
             outfile + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
@@ -509,7 +537,7 @@ def merge(
     if o_maf is not None and i_maf is not None and ds_maf is not None:
         df_o_s_ds = camd(o_maf, i_maf, ds_maf)
         if tumor_name_override:
-            df_o_s_ds['Tumor_Sample_Barcode'] = bam_id
+            df_o_s_ds["Tumor_Sample_Barcode"] = bam_id
         file_name = pathlib.Path.cwd().joinpath(
             outfile + "-ORG-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
@@ -517,15 +545,13 @@ def merge(
     elif o_maf is not None and i_maf is not None:
         df_o_s = camd(o_maf, i_maf, None)
         if tumor_name_override:
-            df_o_s['Tumor_Sample_Barcode'] = bam_id
-        file_name = pathlib.Path.cwd().joinpath(
-            outfile + "-ORG-STD" + "_genotyped.maf"
-        )
+            df_o_s["Tumor_Sample_Barcode"] = bam_id
+        file_name = pathlib.Path.cwd().joinpath(outfile + "-ORG-STD" + "_genotyped.maf")
         write_csv(file_name, df_o_s)
     elif o_maf is not None and ds_maf is not None:
         df_o_ds = camd(o_maf, None, ds_maf)
         if tumor_name_override:
-            df_o_ds['Tumor_Sample_Barcode'] = bam_id
+            df_o_ds["Tumor_Sample_Barcode"] = bam_id
         file_name = pathlib.Path.cwd().joinpath(
             outfile + "-ORG-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
@@ -533,7 +559,7 @@ def merge(
     elif i_maf is not None and ds_maf is not None:
         df_s_ds = camd(None, i_maf, ds_maf)
         if tumor_name_override:
-            df_s_ds['Tumor_Sample_Barcode'] = bam_id
+            df_s_ds["Tumor_Sample_Barcode"] = bam_id
         file_name = pathlib.Path.cwd().joinpath(
             outfile + "-STD-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
@@ -551,7 +577,7 @@ def merge(
             outfile + "-SIMPLEX-DUPLEX" + "_genotyped.maf"
         )
         if tumor_name_override:
-            ds_maf['Tumor_Sample_Barcode'] = bam_id
+            ds_maf["Tumor_Sample_Barcode"] = bam_id
         write_csv(file_name, ds_maf)
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
@@ -564,55 +590,56 @@ def merge(
 
 def create_empty_maf_if_missing(filename):
     header = [
-        'Hugo_Symbol',
-        'Entrez_Gene_Id',
-        'Center',
-        'NCBI_Build',
-        'Chromosome',
-        'Start_Position',
-        'End_Position',
-        'Strand',
-        'Variant_Classification',
-        'Variant_Type',
-        'Reference_Allele',
-        'Tumor_Seq_Allele1',
-        'Tumor_Seq_Allele2',
-        'dbSNP_RS',
-        'dbSNP_Val_Status',
-        'Tumor_Sample_Barcode',
-        'Matched_Norm_Sample_Barcode',
-        'Match_Norm_Seq_Allele1',
-        'Match_Norm_Seq_Allele2',
-        'Tumor_Validation_Allele1',
-        'Tumor_Validation_Allele2',
-        'Match_Norm_Validation_Allele1',
-        'Match_Norm_Validation_Allele2',
-        'Verification_Status',
-        'Validation_Status',
-        'Mutation_Status',
-        'Sequencing_Phase',
-        'Sequence_Source',
-        'Validation_Method',
-        'Score',
-        'BAM_File',
-        'Sequencer',
-        't_ref_count',
-        't_alt_count',
-        'n_ref_count',
-        'n_alt_count',
-        'Caller',
-        't_total_count',
-        't_variant_frequency',
-        't_total_count_forward',
-        't_ref_count_forward',
-        't_alt_count_forward',
-        't_total_count_fragment',
-        't_ref_count_fragment',
-        't_alt_count_fragment']
+        "Hugo_Symbol",
+        "Entrez_Gene_Id",
+        "Center",
+        "NCBI_Build",
+        "Chromosome",
+        "Start_Position",
+        "End_Position",
+        "Strand",
+        "Variant_Classification",
+        "Variant_Type",
+        "Reference_Allele",
+        "Tumor_Seq_Allele1",
+        "Tumor_Seq_Allele2",
+        "dbSNP_RS",
+        "dbSNP_Val_Status",
+        "Tumor_Sample_Barcode",
+        "Matched_Norm_Sample_Barcode",
+        "Match_Norm_Seq_Allele1",
+        "Match_Norm_Seq_Allele2",
+        "Tumor_Validation_Allele1",
+        "Tumor_Validation_Allele2",
+        "Match_Norm_Validation_Allele1",
+        "Match_Norm_Validation_Allele2",
+        "Verification_Status",
+        "Validation_Status",
+        "Mutation_Status",
+        "Sequencing_Phase",
+        "Sequence_Source",
+        "Validation_Method",
+        "Score",
+        "BAM_File",
+        "Sequencer",
+        "t_ref_count",
+        "t_alt_count",
+        "n_ref_count",
+        "n_alt_count",
+        "Caller",
+        "t_total_count",
+        "t_variant_frequency",
+        "t_total_count_forward",
+        "t_ref_count_forward",
+        "t_alt_count_forward",
+        "t_total_count_fragment",
+        "t_ref_count_fragment",
+        "t_alt_count_fragment",
+    ]
 
     if not os.path.exists(filename):
         empty_df = pd.DataFrame(columns=header)
-        empty_df.to_csv(filename, index=False, sep='\t')
+        empty_df.to_csv(filename, index=False, sep="\t")
 
 
 def write_csv(file_name, data_frame):
@@ -743,8 +770,7 @@ def all(
     mapping_quality,
     threads,
     sample_id,
-    tumor_name_override
-
+    tumor_name_override,
 ):
     """
     Command that helps to generate genotyped MAF and
@@ -785,10 +811,16 @@ def all(
         fragment_count,
         mapping_quality,
         threads,
-        sample_id
+        sample_id,
     )
     final_file = merge.callback(
-        patient_id, input_maf, standard_maf, duplex_maf, simplex_maf, sample_id, tumor_name_override
+        patient_id,
+        input_maf,
+        standard_maf,
+        duplex_maf,
+        simplex_maf,
+        sample_id,
+        tumor_name_override,
     )
 
     t1_stop = time.perf_counter()

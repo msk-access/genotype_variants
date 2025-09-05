@@ -17,6 +17,8 @@ logger = logging.getLogger("genotype_variants")
 logger.info(
     "genotype:variants:small_variants::create_all_maf_dataframe:: Generating duplex simplex dataframe"
 )
+
+
 # Adopted from Maysun script
 def create_all_maf_dataframe(
     original_dataframe, standard_dataframe, simplex_duplex_dataframe

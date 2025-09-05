@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=68.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "genotype-variants"
+version = "0.3.10"
+description = "A tool for genotyping SNV, INDEL, and SV variants in genomic data."
+readme = "README.rst"
+authors = [
+    {name = "Ronak Shah", email = "rons.shah@gmail.com"},
+]
+license = {text = "Apache-2.0"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Healthcare Industry",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "Click>=7.0",
+    "click_log>=0.3.2",
+    "pandas>=1.0.0",
+    "xlrd>=1.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "isort>=5.0.0",
+    "mypy>=1.0.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "tox>=4.0.0",
+    "sphinx>=7.0.0",
+    "sphinx-rtd-theme>=1.0.0",
+]
+
+[project.scripts]
+genotype_variants = "genotype_variants.cli:main"
+
+[tool.black]
+line-length = 88
+target-version = ["py39"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+line_length = 88
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+addopts = "-v --cov=genotype_variants --cov-report=term-missing"
+
+[metadata]
+license_file = "LICENSE"
