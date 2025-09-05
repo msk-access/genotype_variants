@@ -42,7 +42,7 @@ Which have the following sub-commands:
 Requires GetBaseCountMultiSample v1.2.5 and above
 
 To Do
------
+------
 
 * Tagging genotyped files for thresholds
 * Genotyping normal buffy coats

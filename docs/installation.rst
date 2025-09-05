@@ -29,7 +29,7 @@ For development or specific version installation:
     $ pip install genotype_variants==0.3.10
 
 Using pipx (Recommended for CLI tools)
--------------------------------------
+--------------------------------------
 For isolated installation of CLI applications, use pipx:
 
 .. code-block:: console

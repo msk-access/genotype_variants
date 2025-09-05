@@ -3,7 +3,7 @@ History
 =======
 
 0.3.10 (2024-09-05)
-------------------
+--------------------
 * Migrated build system to pyproject.toml and GitHub Actions
 * Updated supported Python version to 3.9+
 * Added pre-commit configuration and CI integration
@@ -13,7 +13,7 @@ History
 * Updated documentation and configuration for Read the Docs
 
 0.3.5 (2023-01-15)
-------------------
+-------------------
 * Added option to override tumor barcode
 * Improved fragment column handling in MAF processing
 * Enhanced logging for better debugging
@@ -21,7 +21,7 @@ History
 * Updated Dockerfile and dependencies
 
 0.3.4 (2022-11-10)
-------------------
+-------------------
 * Added support for complex variants
 * Fixed issues with GBCMS command generation
 * Improved dataframe formatting and error handling
