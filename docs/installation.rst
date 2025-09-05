@@ -4,19 +4,17 @@
 Installation
 ============
 
-
-Stable release
---------------
-
 Requirements
 ************
 
-* **Python 3**
+* **Python 3.9 or higher**
+* **pandas** (https://pandas.pydata.org/)
 * **click** (https://palletsprojects.com/p/click/)
 * **click-log** (https://github.com/click-contrib/click-log)
-* **pandas** (https://pandas.pydata.org/)
 
-To install genotype_variants, run this command in your terminal:
+Stable Release
+--------------
+To install the latest stable release, run:
 
 .. code-block:: console
 
@@ -24,36 +22,45 @@ To install genotype_variants, run this command in your terminal:
 
 This is the preferred method to install genotype_variants, as it will always install the most recent stable release.
 
-If you don't have `pip`_ installed, this `Python installation guide`_ can guide
-you through the process.
-
-.. _pip: https://pip.pypa.io
-.. _Python installation guide: http://docs.python-guide.org/en/latest/starting/installation/
-
-
-From sources
-------------
-
-The sources for genotype_variants can be downloaded from the `Github repo`_.
-
-You can either clone the public repository:
+For development or specific version installation:
 
 .. code-block:: console
 
-    $ git clone git://github.com/rhshah/genotype_variants
+    $ pip install genotype_variants==0.3.10
 
-Or download the `tarball`_:
-
-.. code-block:: console
-
-    $ curl -OJL https://github.com/rhshah/genotype_variants/tarball/master
-
-Once you have a copy of the source, you can install it with:
+Using pipx (Recommended for CLI tools)
+-------------------------------------
+For isolated installation of CLI applications, use pipx:
 
 .. code-block:: console
 
-    $ python setup.py install
+    $ pipx install genotype_variants
 
 
-.. _Github repo: https://github.com/rhshah/genotype_variants
-.. _tarball: https://github.com/rhshah/genotype_variants/tarball/master
+From Source
+-----------
+
+For development or to get the latest features, you can install from source:
+
+1. Clone the repository:
+
+.. code-block:: console
+
+    $ git clone https://github.com/msk-access/genotype_variants.git
+    $ cd genotype_variants
+
+2. Install in development mode with all dependencies:
+
+.. code-block:: console
+
+    $ pip install -e '.[dev]'
+
+This will install the package in editable mode along with development dependencies.
+
+Docker
+------
+A Docker image is available for easy deployment:
+
+.. code-block:: console
+
+    $ docker pull ghcr.io/msk-access/genotype_variants:latest
