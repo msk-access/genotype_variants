@@ -2,17 +2,19 @@
 genotype_variants
 =================
 
+.. table:: Badges
 
-.. image:: https://img.shields.io/pypi/v/genotype_variants.svg
-        :target: https://pypi.python.org/pypi/genotype_variants
-
-.. image:: https://img.shields.io/github/actions/workflow/status/msk-access/genotype_variants/validate.yaml
-   :alt: GitHub Actions Workflow Status
-
-.. image:: https://readthedocs.org/projects/genotype-variants/badge/?version=develop
-        :target: https://genotype-variants.readthedocs.io/en/latest/?badge=develop
-        :alt: Documentation Status
-
+   ======  ===========================
+   Badge   Link
+   ======  ===========================
+   .. image:: https://img.shields.io/pypi/v/genotype_variants.svg
+       :target: https://pypi.python.org/pypi/genotype_variants
+   .. image:: https://img.shields.io/github/actions/workflow/status/msk-access/genotype_variants/validate.yaml
+       :alt: GitHub Actions Workflow Status
+   .. image:: https://readthedocs.org/projects/genotype-variants/badge/?version=develop
+       :target: https://genotype-variants.readthedocs.io/en/latest/?badge=develop
+       :alt: Documentation Status
+   ======  ===========================
 
 
 
