@@ -4,16 +4,13 @@ genotype_variants
 
 .. image:: https://img.shields.io/pypi/v/genotype_variants.svg
    :target: https://pypi.python.org/pypi/genotype_variants
-   :align: center
 
 .. image:: https://img.shields.io/github/actions/workflow/status/msk-access/genotype_variants/validate.yaml
    :alt: GitHub Actions Workflow Status
-   :align: center
 
 .. image:: https://readthedocs.org/projects/genotype-variants/badge/?version=develop
    :target: https://genotype-variants.readthedocs.io/en/latest/?badge=develop
    :alt: Documentation Status
-   :align: center
 
 
 Project to genotype SNV, INDELS and SV.
