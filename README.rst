@@ -6,11 +6,11 @@ genotype_variants
 .. image:: https://img.shields.io/pypi/v/genotype_variants.svg
         :target: https://pypi.python.org/pypi/genotype_variants
 
-.. image:: https://img.shields.io/github/workflow/status/msk-access/genotype_variants/validate   
+.. image:: https://img.shields.io/github/workflow/status/msk-access/genotype_variants/validate.yaml
         :alt: GitHub Workflow Status
 
-.. image:: https://readthedocs.org/projects/genotype-variants/badge/?version=latest
-        :target: https://genotype-variants.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/genotype-variants/badge/?version=develop
+        :target: https://genotype-variants.readthedocs.io/en/latest/?badge=develop
         :alt: Documentation Status
 
 
