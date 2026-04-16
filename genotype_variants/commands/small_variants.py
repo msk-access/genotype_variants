@@ -1022,6 +1022,7 @@ def multiple_samples(
             input_maf,
             reference_fasta,
             gbcms_path,
+            None,
             sample_id,
             standard_bam,
             duplex_bam,
@@ -1030,6 +1031,8 @@ def multiple_samples(
             fragment_count,
             mapping_quality,
             threads,
+            sample_id,
+            False,
         )
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
