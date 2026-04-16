@@ -1019,20 +1019,19 @@ def multiple_samples(
             sample_id,
         )
         final_file = all.callback(
-            input_maf,
-            reference_fasta,
-            gbcms_path,
-            None,
-            sample_id,
-            standard_bam,
-            duplex_bam,
-            simplex_bam,
-            filter_duplicate,
-            fragment_count,
-            mapping_quality,
-            threads,
-            sample_id,
-            False,
+            input_maf=input_maf,
+            reference_fasta=reference_fasta,
+            gbcms_path=gbcms_path,
+            patient_id=None,
+            standard_bam=standard_bam,
+            duplex_bam=duplex_bam,
+            simplex_bam=simplex_bam,
+            filter_duplicate=filter_duplicate,
+            fragment_count=fragment_count,
+            mapping_quality=mapping_quality,
+            threads=threads,
+            sample_id=sample_id,
+            tumor_name_override=False
         )
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()
