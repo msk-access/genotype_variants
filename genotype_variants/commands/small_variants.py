@@ -340,8 +340,10 @@ def generate_gbcms_cmd(
     Returns:
         tuple: (command_string, output_maf_path)
     """
-    if not all([input_maf, btype, reference_fasta, gbcms_path, patient_id, bam]):
+    
+    if not (input_maf and btype and reference_fasta and gbcms_path and bam and (patient_id or sample_id)):
         raise ValueError("Missing required arguments")
+
 
     # Use provided sample_id or fall back to patient_id
     sample_id = sample_id or patient_id
