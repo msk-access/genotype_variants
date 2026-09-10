@@ -1,5 +1,6 @@
 import os
 import sys
+import builtins
 import logging
 import time
 import pathlib
@@ -340,8 +341,14 @@ def generate_gbcms_cmd(
     Returns:
         tuple: (command_string, output_maf_path)
     """
-    if not all([input_maf, btype, reference_fasta, gbcms_path, patient_id, bam]):
+    # NOTE: ``all`` is the name of a Click command defined in this module, which
+    # shadows the builtin here -- call the builtin explicitly. ``patient_id`` is
+    # optional: ``multiple-samples`` labels output by ``sample_id`` and passes
+    # ``patient_id=None``, so require one of the two rather than both.
+    if not builtins.all([input_maf, btype, reference_fasta, gbcms_path, bam]):
         raise ValueError("Missing required arguments")
+    if not (patient_id or sample_id):
+        raise ValueError("Either patient_id or sample_id must be provided")
 
     # Use provided sample_id or fall back to patient_id
     sample_id = sample_id or patient_id

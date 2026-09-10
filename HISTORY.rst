@@ -2,6 +2,15 @@
 History
 =======
 
+0.3.12 (2026-09-10)
+------------------
+* Fixed ``small_variants multiple-samples`` (and ``all``/``generate`` when only
+  ``--sample-id`` is given): ``generate_gbcms_cmd`` called ``all([...])`` where
+  ``all`` resolves to the module-level Click command, not the builtin, so the
+  argument check ran Click's parser on a list and raised
+  ``TypeError: object of type 'NoneType' has no len()``. Now calls
+  ``builtins.all`` and requires *either* ``patient_id`` or ``sample_id``.
+
 0.3.11 (2026-09-10)
 ------------------
 * Fixed ``small_variants multiple-samples``: its internal call to the ``all``
