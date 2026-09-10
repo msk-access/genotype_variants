@@ -26,7 +26,7 @@ For development or specific version installation:
 
 .. code-block:: console
 
-    $ pip install genotype_variants==0.3.10
+    $ pip install genotype_variants==0.3.11
 
 Using pipx (Recommended for CLI tools)
 -------------------------------------

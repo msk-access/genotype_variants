@@ -887,6 +887,14 @@ def all(
     type=click.INT,
     help="Number of threads to use for GetBaseCountMultiSample",
 )
+@click.option(
+    "-to",
+    "--tumor_name_override",
+    required=False,
+    is_flag=True,
+    default=False,
+    help="Override the MAF Tumor_Sample_Barcode name with the BAM Tumor Sample Barcode",
+)
 @click_log.simple_verbosity_option(logger)
 def multiple_samples(
     input_metadata,
@@ -896,6 +904,7 @@ def multiple_samples(
     fragment_count,
     mapping_quality,
     threads,
+    tumor_name_override,
 ):
     """
     Command that helps to generate genotyped MAF and
@@ -1022,7 +1031,7 @@ def multiple_samples(
             input_maf,
             reference_fasta,
             gbcms_path,
-            sample_id,
+            None,
             standard_bam,
             duplex_bam,
             simplex_bam,
@@ -1030,6 +1039,8 @@ def multiple_samples(
             fragment_count,
             mapping_quality,
             threads,
+            sample_id,
+            tumor_name_override,
         )
     t1_stop = time.perf_counter()
     t2_stop = time.process_time()

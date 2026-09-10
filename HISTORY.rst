@@ -2,6 +2,14 @@
 History
 =======
 
+0.3.11 (2026-09-10)
+------------------
+* Fixed ``small_variants multiple-samples``: its internal call to the ``all``
+  command was missing the ``sample_id`` and ``tumor_name_override`` arguments
+  (and passed ``sample_id`` in the ``patient_id`` position), causing a
+  ``TypeError`` on every run
+* Added ``-to/--tumor_name_override`` passthrough to ``multiple-samples``
+
 0.3.10 (2024-09-05)
 ------------------
 * Migrated build system to pyproject.toml and GitHub Actions
