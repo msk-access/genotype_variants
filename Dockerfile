@@ -1,5 +1,7 @@
 # Build stage for GetBaseCountsMultiSample
-FROM ubuntu:latest as builder
+# Pinned: ubuntu:latest moved to 25.10 / CMake 4, which drops compatibility with
+# the bundled bamtools' old cmake_minimum_required and breaks the build.
+FROM ubuntu:24.04 AS builder
 
 ARG GBCMS_VERSION="1.2.5"
 ARG DEBIAN_FRONTEND=noninteractive
@@ -29,7 +31,7 @@ RUN cd /opt && \
     rm -rf build && \
     mkdir -p build && \
     cd build/ && \
-    cmake -DCMAKE_CXX_FLAGS=-std=c++03 -DCMAKE_BUILD_TYPE=Release .. && \
+    cmake -DCMAKE_CXX_FLAGS=-std=c++03 -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. && \
     make -j$(nproc) && \
     make install && \
     cp ../lib/libbamtools.so.2.3.0 /usr/lib/ && \
@@ -39,7 +41,7 @@ RUN cd /opt && \
     cp GetBaseCountsMultiSample /usr/local/bin/
 
 # Final stage
-FROM ubuntu:latest
+FROM ubuntu:24.04
 
 # Install Python and other runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
